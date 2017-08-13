@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -40,6 +41,9 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	double leftoverdelta; //delta left over after the 40fps
 	double futureleftoverdelta; //first this variable is set, then leftoverdelta becomes this by the end of the frame
 	double fps = 40;//fps to update at
+	
+	long fpscount;
+	int framestaken;
 	
 	public static void main(String[] args){
 		new Main();
@@ -194,6 +198,12 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		    delta = updateLength/1000d;
 			if(delta > 0.05) delta = 0.05;
 //			if(delta > 1) System.out.println("below 60 FPS");
+			framestaken++;
+			if(System.currentTimeMillis() - fpscount >= 1000){
+				System.out.println(framestaken);
+				framestaken = 0;
+				fpscount = System.currentTimeMillis();
+			}
 			
 			for(Player player: new ArrayList<Player>(players)){
 				double fulldelta = delta + leftoverdelta;
@@ -401,6 +411,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	//		double delta = Double.parseDouble(message.split(" ")[1]);// delta (how long frame took for client) should probably change to specific time so server 
 			long currentFrame = player.frames;
 			long frame = Long.parseLong(message.split(" ")[1]);// when the action happened
+			long existingframes = frame;
+			if(disable && direction == 1) frame += player.rightstart;
+			
+			
 			if(frame > currentFrame){
 	//			player.start = (long) (currentTime - time);
 				frame = currentFrame;  //todo make this actually wait and save this move into cue
@@ -421,14 +435,17 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	
 			
 			//count the difference
-			int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+//			int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+			long amountremoved = currentFrame - frame;
 			int index = player.oldStates.indexOf(originalState);
 			if(index==-1) index = 0;
 			ArrayList<OldState> oldOldStates = new ArrayList<>();
+			ArrayList<OldState> oldStates = new ArrayList<>(player.oldStates);
 			for(int i=0;i<amountremoved;i++){//remove all of the future ones
-				oldOldStates.add(player.oldStates.get(index));
-				player.oldStates.remove(index);
+				oldOldStates.add(oldStates.get(index));
+				oldStates.remove(index);
 			}
+			player.oldStates = oldStates;
 			//insert new data
 			boolean rightchange = false;
 			boolean leftchange = false;
@@ -440,6 +457,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				leftchange = true;
 			}
 			//call player.update however many missed frames there were
+			player.frames = frame;
 			for(int i=0;i<amountremoved;i++){//remove all of the future ones
 				if(!leftchange){
 					player.left = oldOldStates.get(i).left;

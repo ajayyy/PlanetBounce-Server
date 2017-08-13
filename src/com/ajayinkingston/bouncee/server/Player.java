@@ -15,6 +15,8 @@ public class Player extends Entity{
 	boolean paused;
 	int pausedStack;
 	
+	long rightstart = -1;
+	
 	public Player(int id, float x, float y, int mass){
 		this.id = id;
 		this.x = x;
@@ -38,8 +40,8 @@ public class Player extends Entity{
 //			System.out.println((player == null) + " " + (planet == null));
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
 			
-			gravityx += Math.cos(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;//XXX: IF YOU CHANGE THIS CHANGE IT IN PLANET CLASS AND SERVER PROJECT TOO
-			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
+//			gravityx += Math.cos(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;//XXX: IF YOU CHANGE THIS CHANGE IT IN PLANET CLASS AND SERVER PROJECT TOO
+//			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
 		}
 		
 //		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
@@ -93,6 +95,10 @@ public class Player extends Entity{
 			
 //			x+=Math.cos(0) * 500*delta;
 //			y+=Math.sin(0) * 500*delta;
+			
+			if(rightstart == -1){
+				rightstart = frames;
+			}
 		}
 		if(left){
 			xspeed += Math.cos(main.getClosestAngle(this)-1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
