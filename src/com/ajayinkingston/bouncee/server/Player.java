@@ -31,6 +31,24 @@ public class Player extends Entity{
 			pausedStack++;
 			return;
 		}
+		if(frames > 60){
+			right = true;
+		}
+		if(frames > 120){
+			right = false;
+		}
+		if(frames > 200){
+			left = true;
+		}
+		if(frames > 250){
+			left = false;
+		}
+		if(frames > 300){
+			right = true;
+		}
+		if(frames > 350){
+			right = false;
+		}
 		
 		//gravity
 		ArrayList<Planet> closestplanets = main.getClosestPlanets(this);
@@ -40,8 +58,8 @@ public class Player extends Entity{
 //			System.out.println((player == null) + " " + (planet == null));
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
 			
-//			gravityx += Math.cos(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;//XXX: IF YOU CHANGE THIS CHANGE IT IN PLANET CLASS AND SERVER PROJECT TOO
-//			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
+			gravityx += Math.cos(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;//XXX: IF YOU CHANGE THIS CHANGE IT IN PLANET CLASS AND SERVER PROJECT TOO
+			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
 		}
 		
 //		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
