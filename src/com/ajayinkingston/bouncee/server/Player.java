@@ -15,7 +15,7 @@ public class Player extends Entity{
 	boolean paused;
 	int pausedStack;
 	
-	long rightstart = -1;
+//	long rightstart = -1;
 	
 	public Player(int id, float x, float y, int mass){
 		this.id = id;
@@ -96,9 +96,9 @@ public class Player extends Entity{
 //			x+=Math.cos(0) * 500*delta;
 //			y+=Math.sin(0) * 500*delta;
 			
-			if(rightstart == -1){
-				rightstart = frames;
-			}
+//			if(rightstart == -1){
+//				rightstart = frames;
+//			}
 		}
 		if(left){
 			xspeed += Math.cos(main.getClosestAngle(this)-1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)

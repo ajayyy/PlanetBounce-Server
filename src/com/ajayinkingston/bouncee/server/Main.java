@@ -205,42 +205,12 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				fpscount = System.currentTimeMillis();
 			}
 			
-			for(Player player: new ArrayList<Player>(players)){
-				double fulldelta = delta + leftoverdelta;
-				
-				for(double i=fulldelta;i>=1/fps;i-=1/fps){
-					player.update(this, 1/fps);
-				}
-				futureleftoverdelta = fulldelta%(1/fps);
+			double fulldelta = delta + leftoverdelta;
+			for(double i=fulldelta;i>=1/fps;i-=1/fps){
+				update(1/fps);
 			}
-			
-			for(Projectile projectile: new ArrayList<>(projectiles)){
-				projectile.update(this, delta);
-				if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
-					projectiles.remove(projectile);
-				}
-			}
-			
-			//collision detection
-			for(int i=0;i<players.size();i++){//for player to player
-				for(int s=i+1;s<players.size();s++){
-					if(players.get(i).collided(players.get(s))){
-						//collided with player
-						affectColidedPlayers(players.get(i),players.get(s));
-					}
-				}
-			}
-			//projectile collision
-			for(Projectile projectile: new ArrayList<>(projectiles)){
-				for(Player player: players){
-					if(player.collided(projectile)){
-						//collided
-						affectColidedPlayers(player,projectile);
-					}
-				}
-			}
+			futureleftoverdelta = fulldelta%(1/fps);
 
-			
 			BufferStrategy s = getBufferStrategy();
 			if(s!=null){
 				Graphics2D g = (Graphics2D) s.getDrawGraphics();
@@ -264,18 +234,50 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 			
 			//cap at 60 fps, should it be like this on the clients too, or instead cap at 50 or 40 fps (currently relying on lib-gdx to do the capping client side
-			diff = System.currentTimeMillis() - lastcap;
-			long targetDelay = 1000/60;
-			if (diff < targetDelay) {
-				try {
-					Thread.sleep(targetDelay - diff);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			lastcap = System.currentTimeMillis();
+//			diff = System.currentTimeMillis() - lastcap;
+//			long targetDelay = 1000/60;
+//			if (diff < targetDelay) {
+//				try {
+//					Thread.sleep(targetDelay - diff);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			lastcap = System.currentTimeMillis();
 			
 			leftoverdelta = futureleftoverdelta;
+		}
+	}
+	
+	public void update(double delta){
+		for(Player player: new ArrayList<Player>(players)){
+				player.update(this, 1/fps);
+		}
+		
+		for(Projectile projectile: new ArrayList<>(projectiles)){
+			projectile.update(this, delta);
+			if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
+				projectiles.remove(projectile);
+			}
+		}
+		
+		//collision detection
+		for(int i=0;i<players.size();i++){//for player to player
+			for(int s=i+1;s<players.size();s++){
+				if(players.get(i).collided(players.get(s))){
+					//collided with player
+					affectColidedPlayers(players.get(i),players.get(s));
+				}
+			}
+		}
+		//projectile collision
+		for(Projectile projectile: new ArrayList<>(projectiles)){
+			for(Player player: players){
+				if(player.collided(projectile)){
+					//collided
+					affectColidedPlayers(player,projectile);
+				}
+			}
 		}
 	}
 	
@@ -412,7 +414,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			long currentFrame = player.frames;
 			long frame = Long.parseLong(message.split(" ")[1]);// when the action happened
 			long existingframes = frame;
-			if(disable && direction == 1) frame += player.rightstart;
+//			if(disable && direction == 1) frame += player.rightstart;
 			
 			
 			if(frame > currentFrame){
