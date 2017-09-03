@@ -251,7 +251,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	
 	public void update(double delta){
 		for(Player player: new ArrayList<Player>(players)){
-				player.update(this, 1/fps);
+			player.update(this, delta);
 		}
 		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
@@ -430,10 +430,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 			
 			//make now like that old state
-			player.x = originalState.x;
-			player.y = originalState.y;
-			player.xspeed = originalState.xspeed;
-			player.yspeed = originalState.yspeed;
+//			player.x = originalState.x;
+//			player.y = originalState.y;
+//			player.xspeed = originalState.xspeed;
+//			player.yspeed = originalState.yspeed;
 	
 			
 			//count the difference
@@ -460,6 +460,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 			//call player.update however many missed frames there were
 			player.frames = frame;
+			amountremoved = 0;
 			for(int i=0;i<amountremoved;i++){//remove all of the future ones
 				if(!leftchange){
 					player.left = oldOldStates.get(i).left;

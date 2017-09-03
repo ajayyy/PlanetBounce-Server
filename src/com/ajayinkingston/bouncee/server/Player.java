@@ -34,7 +34,7 @@ public class Player extends Entity{
 		if(frames > 60){
 			right = true;
 		}
-		if(frames > 120){
+		if(frames > 150){
 			right = false;
 		}
 		if(frames > 200){
