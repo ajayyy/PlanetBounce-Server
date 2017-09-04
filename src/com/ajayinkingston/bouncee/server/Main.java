@@ -601,6 +601,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				messenger.sendMessageToClient(id, "FOOD " + i + " " + s + " " + planets[i].food[s].enabled + " " + planets[i].food[s].angle + " " + planets[i].food[s].getAmount());
 			}
 		}
+		messenger.sendMessageToClient(id, "START");
 		players.add(newplayer);
 	}
 
