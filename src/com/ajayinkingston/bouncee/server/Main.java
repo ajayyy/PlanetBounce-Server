@@ -614,8 +614,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	}
 	
 	//util methods
-		public double getDotProduct(double x1, double y1, double x2, double y2){
-			return x1 * x2 + y1 * y2;
-		}
+	public double getDotProduct(double x1, double y1, double x2, double y2){
+		return x1 * x2 + y1 * y2;
+	}
 
 }

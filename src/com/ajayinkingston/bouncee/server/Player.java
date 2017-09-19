@@ -31,24 +31,24 @@ public class Player extends Entity{
 			pausedStack++;
 			return;
 		}
-		if(frames > 60){
-			right = true;
-		}
-		if(frames > 150){
-			right = false;
-		}
-		if(frames > 200){
-			left = true;
-		}
-		if(frames > 250){
-			left = false;
-		}
-		if(frames > 300){
-			right = true;
-		}
-		if(frames > 350){
-			right = false;
-		}
+//		if(frames > 60){
+//			right = true;
+//		}
+//		if(frames > 150){
+//			right = false;
+//		}
+//		if(frames > 200){
+//			left = true;
+//		}
+//		if(frames > 250){
+//			left = false;
+//		}
+//		if(frames > 300){
+//			right = true;
+//		}
+//		if(frames > 350){
+//			right = false;
+//		}
 		
 		//gravity
 		ArrayList<Planet> closestplanets = main.getClosestPlanets(this);
@@ -71,6 +71,7 @@ public class Player extends Entity{
 		//bouncing
 		Planet planet = main.getClosestPlanet(this);
 		if(main.isTouchingPlanet(this, planet)){
+			System.out.println(frames + " frame bounced at");
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
 			
 			double ux = 2 * (main.getDotProduct(xspeed, yspeed, Math.cos(angle), Math.sin(angle))) * Math.cos(angle);
