@@ -69,7 +69,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	        	x = -size*6-nsize + x;
 	//        	y = size*6-nsize + y;
 	        	planetlist.add(new Planet(x,y,nsize));
-	        	System.out.println("sdalsadmlkkldsa" + x + " " + mapsize);
 	        }
 	        x = center.x;
 //	        y = center.y;
@@ -79,7 +78,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	        	x = bufferdist*6-nsize + x;
 	//        	y = bufferdist*6-nsize + y;
 	        	planetlist.add(new Planet(x,y,nsize));
-	        	System.out.println("sdalsadmlkkldsa" + x + " " + mapsize);
 	        }
 	        size = center.radius;
 	        x = center.y + bufferdist*3;
@@ -88,7 +86,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	        	float nsize = random.nextInt(200)+100;
 	        	x = -bufferdist*6-nsize + x;
 	        	planetlist.add(new Planet(x,ny,nsize));
-	        	System.out.println("sdalsadmlkkldsa" + x + " " + mapsize);
 	        }
 	        size = center.radius;
 	        x = center.y + bufferdist*3;
@@ -97,7 +94,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	        	float nsize = random.nextInt(200)+100;
 	        	x = bufferdist*6-nsize + x;
 	        	planetlist.add(new Planet(x,ny,nsize));
-	        	System.out.println("sdalsadmlkkldsa" + x + " " + mapsize);
 	        }
         }
         
@@ -333,7 +329,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 			if(originalState == null){
-				originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right);
+				originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot);
 			}
 			
 			//make now like that old state
@@ -345,7 +341,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			//count the difference
 			int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
-			System.out.println("AMOUNT REMOVED " + amountremoved);
+//			System.out.println("AMOUNT REMOVED " + amountremoved);
 			int index = player.oldStates.indexOf(originalState);
 			if(index==-1) index = 0;
 			ArrayList<OldState> oldOldStates = new ArrayList<>();
@@ -358,6 +354,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			//change xspeeds
 			player.xspeed -= (float) (Math.cos(projectileangle) * projectileSpeedChange);
 			player.yspeed -= (float) (Math.sin(projectileangle) * projectileSpeedChange);
+			player.shot = true;
 			
 			//create projectiles
 			Projectile projectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
@@ -416,7 +413,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			long existingframes = frame;
 //			if(disable && direction == 1) frame += player.rightstart;
 			
-			
+			System.out.println("Server at frame " + player.frames + " while getting move message");
 			if(frame > currentFrame){
 	//			player.start = (long) (currentTime - time);
 				frame = currentFrame;  //todo make this actually wait and save this move into cue
@@ -426,7 +423,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 			if(originalState == null){
-				originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right);
+				originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot);
+				System.out.println("--__--");
 			}
 			
 			//make now like that old state
@@ -460,7 +458,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 			//call player.update however many missed frames there were
 			player.frames = frame;
-			amountremoved = 0;
+//			amountremoved = 0;
+			System.out.println("Started moving at frame" + player.frames + " " + amountremoved);
 			for(int i=0;i<amountremoved;i++){//remove all of the future ones
 				if(!leftchange){
 					player.left = oldOldStates.get(i).left;
@@ -496,7 +495,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			for(Player player2:players){
 				if(player2 != player){
-					System.out.println("hwhsakjsadkj" + player2 + " " + player);
+//					System.out.println("hwhsakjsadkj" + player2 + " " + player);
 					messenger.sendMessageToClient(player2.id, player.id + " " + omessage);
 	//				messenger.sendMessageToClient(player2.id, player.id + " " + (Math.cos(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * delta) + " " + (Math.sin(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * delta));
 				}

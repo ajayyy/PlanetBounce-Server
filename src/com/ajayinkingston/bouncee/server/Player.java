@@ -15,6 +15,8 @@ public class Player extends Entity{
 	boolean paused;
 	int pausedStack;
 	
+	boolean shot;//shot this frame
+	
 //	long rightstart = -1;
 	
 	public Player(int id, float x, float y, int mass){
@@ -31,9 +33,9 @@ public class Player extends Entity{
 			pausedStack++;
 			return;
 		}
-//		if(frames > 60){
-//			right = true;
-//		}
+		if(frames > 60){
+			right = true;
+		}
 //		if(frames > 150){
 //			right = false;
 //		}
@@ -46,9 +48,9 @@ public class Player extends Entity{
 //		if(frames > 300){
 //			right = true;
 //		}
-//		if(frames > 350){
-//			right = false;
-//		}
+		if(frames > 350){
+			right = false;
+		}
 		
 		//gravity
 		ArrayList<Planet> closestplanets = main.getClosestPlanets(this);
@@ -143,7 +145,7 @@ public class Player extends Entity{
 //		System.out.println("X: " + x + " Y: " + y + " DELTA: " + delta);
 		
 		//save old states
-		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right));
+		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, shot));
 		if(oldStates.size() > 200) oldStates.remove(0);
 		
 		frames++;
