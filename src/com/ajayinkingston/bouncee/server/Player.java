@@ -19,6 +19,8 @@ public class Player extends Entity{
 	
 //	long rightstart = -1;
 	
+//	final float xspeed,yspeed;
+	
 	public Player(int id, float x, float y, int mass){
 		this.id = id;
 		this.x = x;
@@ -113,6 +115,8 @@ public class Player extends Entity{
 		if(right){
 			xspeed += Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 			yspeed += Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			
+			System.out.println(frames + " MOVED BY X " + (Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta) + " MOVED BY Y " + Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta + " AT ANGLE " + main.getClosestAngle(this) + " X " + x + " Y " + y);
 			
 //			x+=Math.cos(0) * 500*delta;
 //			y+=Math.sin(0) * 500*delta;

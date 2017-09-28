@@ -99,6 +99,9 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
         
         planets = planetlist.toArray(new Planet[planetlist.size()]);
         
+        planets = new Planet[1];
+        planets[0] = planetlist.get(0);
+        
         Thread thread = new Thread(this);
         thread.start();
 	}
