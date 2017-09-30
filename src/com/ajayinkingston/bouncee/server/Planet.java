@@ -28,8 +28,8 @@ public class Planet {
 		
 		
 		Random rand = new Random();
-//		food = new Food[rand.nextInt(7)+1];
-		food = new Food[0];
+		food = new Food[rand.nextInt(7)+1];
+//		food = new Food[0];
 		for(int i=0;i<food.length;i++){
 			food[i] = new Food(rand.nextFloat()*(Math.PI*2), 5);
 		}
