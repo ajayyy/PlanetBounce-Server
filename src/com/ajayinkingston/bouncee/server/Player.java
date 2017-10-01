@@ -35,9 +35,9 @@ public class Player extends Entity{
 			pausedStack++;
 			return;
 		}
-//		if(frames > 60){
-//			right = true;
-//		}
+		if(frames > 60){
+			left = true;
+		}
 //		if(frames > 150){
 //			right = false;
 //		}
@@ -50,9 +50,15 @@ public class Player extends Entity{
 //		if(frames > 300){
 //			right = true;
 //		}
-//		if(frames > 350){
-//			right = false;
-//		}
+		if(frames > 350){
+			left = false;
+		}
+		if(frames > 500){
+			right = true;
+		}
+		if(frames > 650){
+			right = false;
+		}
 		
 		//gravity
 		ArrayList<Planet> closestplanets = main.getClosestPlanets(this);
@@ -116,7 +122,7 @@ public class Player extends Entity{
 			xspeed += Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 			yspeed += Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 			
-			System.out.println(frames + " MOVED BY X " + (Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta) + " MOVED BY Y " + Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta + " AT ANGLE " + main.getClosestAngle(this) + " X " + x + " Y " + y);
+//			System.out.println(frames + " MOVED BY X " + (Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta) + " MOVED BY Y " + Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta + " AT ANGLE " + main.getClosestAngle(this) + " X " + x + " Y " + y);
 			
 //			x+=Math.cos(0) * 500*delta;
 //			y+=Math.sin(0) * 500*delta;

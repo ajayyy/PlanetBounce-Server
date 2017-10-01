@@ -184,6 +184,11 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player.update(this, delta);
 		}
 		
+		for(Movement movement: new ArrayList<>(movements)){
+			handleMovement(movement.player, movement.disabled, movement.direction, movement.frame);
+			movements.remove(movement);
+		}
+		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
 			projectile.update(this, delta);
 			if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
@@ -237,7 +242,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	    player2.y += player2yspeed * delta;
 	}
 	
-	public void handleMovement(Player player, boolean disable, boolean direction, long frame) {ss
+	public void handleMovement(Player player, boolean disable, boolean direction, long frame) {
 		long currentFrame = player.frames;
 		long existingframes = frame;
 //		if(disable && direction == 1) frame += player.rightstart;
@@ -428,7 +433,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 			messenger.sendMessageToClient(id, "rm");//received move
 			
-			ss
+			
 		}
 	}
 	
