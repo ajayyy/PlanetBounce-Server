@@ -35,9 +35,9 @@ public class Player extends Entity{
 			pausedStack++;
 			return;
 		}
-		if(frames > 60){
-			right = true;
-		}
+//		if(frames > 60){
+//			right = true;
+//		}
 //		if(frames > 150){
 //			right = false;
 //		}
@@ -50,9 +50,9 @@ public class Player extends Entity{
 //		if(frames > 300){
 //			right = true;
 //		}
-		if(frames > 350){
-			right = false;
-		}
+//		if(frames > 350){
+//			right = false;
+//		}
 		
 		//gravity
 		ArrayList<Planet> closestplanets = main.getClosestPlanets(this);

@@ -45,6 +45,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	long fpscount;
 	int framestaken;
 	
+	ArrayList<Movement> movements = new ArrayList<>(); //movements made by clients, added to this list so that they can all be processed in the same frame;
+	
 	public static void main(String[] args){
 		new Main();
 	}
@@ -106,78 +108,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
         thread.start();
 	}
 	
-	public int getIndexOf(Object toSearch, Object[] tab ){
-	  for( int i=0; i< tab.length ; i ++ )
-	    if( tab[ i ] == toSearch)
-	     return i;
-
-	  return -1;
-	}
-	
-	public ArrayList<Planet> getClosestPlanets(Entity player) {
-		ArrayList<Planet> closeplanets = new ArrayList<>();
-		Planet closest = null;
-		float closestdistance = 0;
-		for(int i=0;i<planets.length;i++){
-			if(planets[i] == null){
-				System.out.println("Planet is null: " + i);
-			}
-//			if(Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < Math.pow(player.mass/2 + planets[i].radius, 2)){
-				//collided
-//				double angle = Math.atan2((player.y) - (planets[i].y), (player.x) - (planets[i].x));
-////				double angle = Math.atan2((splats.planets[i].y) - y, (splats.planets[i].x) - x);
-//
-//				player.yspeed = (float) (Math.sin(angle) * planets[i].bounceheight); //TODO BOUNCE HEIGHT A FORMULA FROM GRAVITY TO DIFFER IN EVERY PLANET AND FOR EVERY PLAYER WITH DIFFERENT MASS
-//				player.xspeed = (float) (Math.cos(angle) * planets[i].bounceheight);
-////				yspeed = -yspeed;
-////				System.out.println((Math.cos(angle) * splats.planets[i].gravity / (Math.sqrt(Math.pow((y) - (splats.planets[i].y), 2) + Math.pow((x) - (splats.planets[i].x), 2))) * 400) + " " + (Math.sin(angle) * splats.planets[i].gravity / (Math.sqrt(Math.pow((y) - (splats.planets[i].y), 2) + Math.pow((x) - (splats.planets[i].x), 2))) * 400));
-//				closeplanets.add(splats.planets[i]);
-//				if(closest == null || Math.pow(Math.abs(x - splats.planets[i].x), 2) + Math.pow(Math.abs(y - splats.planets[i].y), 2) < closestdistance){
-//					closest = splats.planets[i];
-//					closestdistance = (float) (Math.pow(Math.abs(x - splats.planets[i].x), 2) + Math.pow(Math.abs(y - splats.planets[i].y), 2));
-//				}
-			if (Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < Math.pow(player.getSize() / 2 + (planets[i].radius * 3.5f), 2)) {
-				//close
-				closeplanets.add(planets[i]);
-				if(closest == null || Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < closestdistance){
-					closest = planets[i];
-					closestdistance = (float) (Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2));
-				}
-				if(planets[i] == null) System.out.print(i+"sdsadsadSADKLJAKLJADLKJDLKJADSKLoiurweiourweoi");
-			}else if(closest == null || Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < closestdistance){
-				closest = planets[i];
-				closestdistance = (float) (Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2));
-			}
-		}
-		
-		closeplanets.remove(closest);
-		closeplanets.add(0, closest);//Put it at the back of the list
-		
-		return closeplanets;
-	}
-	
-	public Planet getClosestPlanet(Entity player){
-		ArrayList<Planet> closestplanets = getClosestPlanets(player);
-		return closestplanets.get(0);
-	}
-	
-	public double getClosestAngle(Entity player){
-		Planet planet = getClosestPlanet(player);
-		double angle = Math.atan2((player.y) - (planet.y), (player.x) - (planet.x));
-		double closestangle = angle - Math.PI;
-		return closestangle;
-	}
-	
-	public boolean isTouchingPlanet(Entity player, Planet planet){
-		return Math.pow(Math.abs(player.x - planet.x), 2) + Math.pow(Math.abs(player.y - planet.y), 2) < Math.pow(player.getRadius() + planet.radius, 2);
-	}
-	
-	public double getAngleFromPlanet(Player player, Planet planet){
-		double angle = Math.atan2((player.y) - (planet.y), (player.x) - (planet.x));
-		double closestangle = angle - Math.PI;
-		return closestangle;
-	}
-	
 	@Override
 	public void run() {
 		lastcap = System.currentTimeMillis();
@@ -232,17 +162,18 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				createBufferStrategy(3);
 			}
 			
-			//cap at 60 fps, should it be like this on the clients too, or instead cap at 50 or 40 fps (currently relying on lib-gdx to do the capping client side
-//			diff = System.currentTimeMillis() - lastcap;
-//			long targetDelay = 1000/60;
-//			if (diff < targetDelay) {
-//				try {
-//					Thread.sleep(targetDelay - diff);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			lastcap = System.currentTimeMillis();
+			//cap at 60 fps, should it be like this on the clients too, or instead cap at 50 or 40 fps (currently relying on lib-gdx to do the capping client side)
+			//above comment is obsolete, but it does waste precious resources to not cap framerate
+			diff = System.currentTimeMillis() - lastcap;
+			long targetDelay = 1000/60;
+			if (diff < targetDelay) {
+				try {
+					Thread.sleep(targetDelay - diff);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			lastcap = System.currentTimeMillis();
 			
 			leftoverdelta = futureleftoverdelta;
 		}
@@ -304,6 +235,80 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	    player1.y += player1yspeed * delta;
 	    player2.x += player2xspeed * delta;
 	    player2.y += player2yspeed * delta;
+	}
+	
+	public void handleMovement(Player player, boolean disable, boolean direction, long frame) {ss
+		long currentFrame = player.frames;
+		long existingframes = frame;
+//		if(disable && direction == 1) frame += player.rightstart;
+		
+		System.out.println("Server at frame " + player.frames + " while getting move message");
+		if(frame > currentFrame){
+//			player.start = (long) (currentTime - time);
+			frame = currentFrame;  //todo make this actually wait and save this move into cue
+//			return;
+		}
+		player.paused = true;
+		
+		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
+		if(originalState == null){
+			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot);
+			System.out.println("--__--");
+		}
+		
+		//make now like that old state
+//		player.x = originalState.x;
+//		player.y = originalState.y;
+//		player.xspeed = originalState.xspeed;
+//		player.yspeed = originalState.yspeed;
+
+		//count the difference
+//		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+		long amountremoved = currentFrame - frame;
+		int index = player.oldStates.indexOf(originalState);
+		if(index==-1) index = 0;
+		ArrayList<OldState> oldOldStates = new ArrayList<>();
+		ArrayList<OldState> oldStates = new ArrayList<>(player.oldStates);
+		for(int i=0;i<amountremoved;i++){//remove all of the future ones
+			oldOldStates.add(oldStates.get(index));
+			oldStates.remove(index);
+		}
+		player.oldStates = oldStates;
+		//insert new data
+		boolean rightchange = false;
+		boolean leftchange = false;
+		if(direction){
+			player.right = !disable;
+			rightchange = true;
+		}else{
+			player.left = !disable;
+			leftchange = true;
+		}
+		//call player.update however many missed frames there were
+		player.frames = frame;
+//		amountremoved = 0;
+		System.out.println("Started moving at frame" + player.frames + " " + amountremoved);
+		for(int i=0;i<amountremoved;i++){//remove all of the future ones
+			if(!leftchange){
+				player.left = oldOldStates.get(i).left;
+			}
+			if(!rightchange){
+				player.right = oldOldStates.get(i).right;
+			}
+			if(oldOldStates.get(i).shot){
+				player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+				player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+			}
+			
+			player.update(this, 1/fps);
+		}
+		
+		player.paused = false;
+		for(int i=0;i<player.pausedStack;i++){
+			player.update(this, 1/fps);
+		}
+		player.pausedStack = 0;
+		
 	}
 	
 	@Override
@@ -410,142 +415,96 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			Player player = getPlayer(id);
 			if(player==null) return;
 			int direction = Integer.parseInt(message.split(" ")[0]);
-	//		double delta = Double.parseDouble(message.split(" ")[1]);// delta (how long frame took for client) should probably change to specific time so server 
-			long currentFrame = player.frames;
 			long frame = Long.parseLong(message.split(" ")[1]);// when the action happened
-			long existingframes = frame;
-//			if(disable && direction == 1) frame += player.rightstart;
 			
-			System.out.println("Server at frame " + player.frames + " while getting move message");
-			if(frame > currentFrame){
-	//			player.start = (long) (currentTime - time);
-				frame = currentFrame;  //todo make this actually wait and save this move into cue
-	//			return;
-			}
-			player.paused = true;
-			
-			OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
-			if(originalState == null){
-				originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot);
-				System.out.println("--__--");
-			}
-			
-			//make now like that old state
-//			player.x = originalState.x;
-//			player.y = originalState.y;
-//			player.xspeed = originalState.xspeed;
-//			player.yspeed = originalState.yspeed;
-	
-			
-			//count the difference
-//			int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
-			long amountremoved = currentFrame - frame;
-			int index = player.oldStates.indexOf(originalState);
-			if(index==-1) index = 0;
-			ArrayList<OldState> oldOldStates = new ArrayList<>();
-			ArrayList<OldState> oldStates = new ArrayList<>(player.oldStates);
-			for(int i=0;i<amountremoved;i++){//remove all of the future ones
-				oldOldStates.add(oldStates.get(index));
-				oldStates.remove(index);
-			}
-			player.oldStates = oldStates;
-			//insert new data
-			boolean rightchange = false;
-			boolean leftchange = false;
-			if(direction>0){
-				player.right = !disable;
-				rightchange = true;
-			}else{
-				player.left = !disable;
-				leftchange = true;
-			}
-			//call player.update however many missed frames there were
-			player.frames = frame;
-//			amountremoved = 0;
-			System.out.println("Started moving at frame" + player.frames + " " + amountremoved);
-			for(int i=0;i<amountremoved;i++){//remove all of the future ones
-				if(!leftchange){
-					player.left = oldOldStates.get(i).left;
-				}
-				if(!rightchange){
-					player.right = oldOldStates.get(i).right;
-				}
-				if(oldOldStates.get(i).shot){
-					player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
-					player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
-				}
-				
-				player.update(this, 1/fps);
-			}
-			
-			player.paused = false;
-			for(int i=0;i<player.pausedStack;i++){
-				player.update(this, 1/fps);
-			}
-			player.pausedStack = 0;
-			
-//			System.out.println(timeDifference);
-			
-	//		if(!disable){//ignore delta for now when disable true
-	//			player.xspeed += Math.cos(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * timeDifference;
-	//			player.yspeed += Math.sin(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * timeDifference;
-	//			System.out.println(getClosestAngle(player));	
-	//		}else{
-	//			//if disabled TODO MAKE THIS WORK
-	//			player.xspeed -= Math.cos(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * timeDifference;
-	//			player.yspeed -= Math.sin(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * timeDifference;
-	//		}
+			movements.add(new Movement(player, disable, direction > 0, frame));
 			
 			for(Player player2:players){
 				if(player2 != player){
 //					System.out.println("hwhsakjsadkj" + player2 + " " + player);
 					messenger.sendMessageToClient(player2.id, player.id + " " + omessage);
-	//				messenger.sendMessageToClient(player2.id, player.id + " " + (Math.cos(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * delta) + " " + (Math.sin(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * delta));
+//					messenger.sendMessageToClient(player2.id, player.id + " " + (Math.cos(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * delta) + " " + (Math.sin(getClosestAngle(player)+Math.toRadians(direction*90)) * speed * delta));
 				}
 			}
 			messenger.sendMessageToClient(id, "rm");//received move
 			
-	//		for(Player player1: players){
-	//			if(player1==player) break;
-	//			if(Math.pow(Math.abs(player.x - player1.x), 2) + Math.pow(Math.abs(player.y - player1.y), 2) < Math.pow(player.mass/2 + player.mass/2, 2)){
-	//				
-	//				float xspeed1 = 0;
-	//				float xspeed2 = 0;
-	//				float yspeed1 = 0;
-	//				float yspeed2 = 0;
-	//				
-	//				if(player.x>player1.x){
-	//					xspeed1 = player.xspeed+player1.xspeed;
-	//					xspeed2 = -(player.xspeed+player1.xspeed);
-	////					player.x = player1.x+player.mass/2;
-	//				}else{
-	//					xspeed1 = -(player.xspeed+player1.xspeed);
-	//					xspeed2 = player.xspeed+player1.xspeed;
-	////					player1.x = player1.x+player.mass/2;
-	//				}
-	//				if(player.y>player1.y){
-	//					yspeed1 = player.yspeed+player1.yspeed;
-	//					yspeed2 = -(player.yspeed+player1.yspeed);
-	////					player.y = player1.y+player.mass/2;
-	//				}else{
-	//					yspeed1 = -(player.yspeed+player1.yspeed);
-	//					yspeed2 = player.yspeed+player1.yspeed;
-	////					player1.y = player1.y+player.mass/2;
-	//				}
-	//				
-	////				player.x+=player.xspeed*0.1f;
-	////				player.y+=player.yspeed*0.1f;
-	////				player1.x+=player1.xspeed*0.1f;
-	////				player1.y+=player1.yspeed*0.1f;
-	//				
-	//				messenger.sendMessageToClient(player.id, "SPEEDCHANGE " + xspeed1 + " " + yspeed1);
-	//				messenger.sendMessageToClient(player1.id, "SPEEDCHANGE " + xspeed2 + " " + yspeed2);
-	//				messenger.sendMessageToClient(player.id, "POSCHANGE " + player.x + " " + player.y);
-	//				messenger.sendMessageToClient(player1.id, "POSCHANGE " + player1.x + " " + player1.y);
-	//			}
-	//		}
+			ss
 		}
 	}
+	
+	public int getIndexOf(Object toSearch, Object[] tab ){
+	  for( int i=0; i< tab.length ; i ++ )
+	    if( tab[ i ] == toSearch)
+	     return i;
+
+	  return -1;
+	}
+	
+	public ArrayList<Planet> getClosestPlanets(Entity player) {
+		ArrayList<Planet> closeplanets = new ArrayList<>();
+		Planet closest = null;
+		float closestdistance = 0;
+		for(int i=0;i<planets.length;i++){
+			if(planets[i] == null){
+				System.out.println("Planet is null: " + i);
+			}
+//			if(Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < Math.pow(player.mass/2 + planets[i].radius, 2)){
+				//collided
+//				double angle = Math.atan2((player.y) - (planets[i].y), (player.x) - (planets[i].x));
+////				double angle = Math.atan2((splats.planets[i].y) - y, (splats.planets[i].x) - x);
+//
+//				player.yspeed = (float) (Math.sin(angle) * planets[i].bounceheight); //TODO BOUNCE HEIGHT A FORMULA FROM GRAVITY TO DIFFER IN EVERY PLANET AND FOR EVERY PLAYER WITH DIFFERENT MASS
+//				player.xspeed = (float) (Math.cos(angle) * planets[i].bounceheight);
+////				yspeed = -yspeed;
+////				System.out.println((Math.cos(angle) * splats.planets[i].gravity / (Math.sqrt(Math.pow((y) - (splats.planets[i].y), 2) + Math.pow((x) - (splats.planets[i].x), 2))) * 400) + " " + (Math.sin(angle) * splats.planets[i].gravity / (Math.sqrt(Math.pow((y) - (splats.planets[i].y), 2) + Math.pow((x) - (splats.planets[i].x), 2))) * 400));
+//				closeplanets.add(splats.planets[i]);
+//				if(closest == null || Math.pow(Math.abs(x - splats.planets[i].x), 2) + Math.pow(Math.abs(y - splats.planets[i].y), 2) < closestdistance){
+//					closest = splats.planets[i];
+//					closestdistance = (float) (Math.pow(Math.abs(x - splats.planets[i].x), 2) + Math.pow(Math.abs(y - splats.planets[i].y), 2));
+//				}
+			if (Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < Math.pow(player.getSize() / 2 + (planets[i].radius * 3.5f), 2)) {
+				//close
+				closeplanets.add(planets[i]);
+				if(closest == null || Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < closestdistance){
+					closest = planets[i];
+					closestdistance = (float) (Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2));
+				}
+				if(planets[i] == null) System.out.print(i+"sdsadsadSADKLJAKLJADLKJDLKJADSKLoiurweiourweoi");
+			}else if(closest == null || Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2) < closestdistance){
+				closest = planets[i];
+				closestdistance = (float) (Math.pow(Math.abs(player.x - planets[i].x), 2) + Math.pow(Math.abs(player.y - planets[i].y), 2));
+			}
+		}
+		
+		closeplanets.remove(closest);
+		closeplanets.add(0, closest);//Put it at the back of the list
+		
+		return closeplanets;
+	}
+	
+	public Planet getClosestPlanet(Entity player){
+		ArrayList<Planet> closestplanets = getClosestPlanets(player);
+		return closestplanets.get(0);
+	}
+	
+	public double getClosestAngle(Entity player){
+		Planet planet = getClosestPlanet(player);
+		double angle = Math.atan2((player.y) - (planet.y), (player.x) - (planet.x));
+		double closestangle = angle - Math.PI;
+		return closestangle;
+	}
+	
+	public boolean isTouchingPlanet(Entity player, Planet planet){
+		return Math.pow(Math.abs(player.x - planet.x), 2) + Math.pow(Math.abs(player.y - planet.y), 2) < Math.pow(player.getRadius() + planet.radius, 2);
+	}
+	
+	public double getAngleFromPlanet(Player player, Planet planet){
+		double angle = Math.atan2((player.y) - (planet.y), (player.x) - (planet.x));
+		double closestangle = angle - Math.PI;
+		return closestangle;
+	}
+	
+	
 	
 	public Player getPlayer(int id){
 		for(Player player:players){
