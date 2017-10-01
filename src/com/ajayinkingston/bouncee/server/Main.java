@@ -185,8 +185,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		for(Movement movement: new ArrayList<>(movements)){
-			handleMovement(movement.player, movement.disabled, movement.direction, movement.frame);
-			movements.remove(movement);
+			if(handleMovement(movement.player, movement.disabled, movement.direction, movement.frame)) movements.remove(movement);
 		}
 		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
@@ -242,7 +241,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	    player2.y += player2yspeed * delta;
 	}
 	
-	public void handleMovement(Player player, boolean disable, boolean direction, long frame) {
+	public boolean handleMovement(Player player, boolean disable, boolean direction, long frame) { //returns true if dealt with
 		long currentFrame = player.frames;
 		long existingframes = frame;
 //		if(disable && direction == 1) frame += player.rightstart;
@@ -251,6 +250,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		if(frame > currentFrame){
 //			player.start = (long) (currentTime - time);
 			frame = currentFrame;  //todo make this actually wait and save this move into cue
+			return false;
 //			return;
 		}
 		player.paused = true;
@@ -314,6 +314,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		player.pausedStack = 0;
 		
+		return true;
 	}
 	
 	@Override
