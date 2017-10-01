@@ -4,7 +4,7 @@ public class Movement {
 	/**
 	 * true is right. false is left
 	 */
-	boolean direction; 
+	boolean direction;
 	
 	boolean disabled;
 	long frame;
