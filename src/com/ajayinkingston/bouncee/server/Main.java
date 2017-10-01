@@ -120,12 +120,14 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(this);
 		frame.setVisible(true);
+		last = System.currentTimeMillis();
 		while(true){
 			long now = System.currentTimeMillis();
 			long updateLength = now - last;
 		    last = now;
 //			delta = updateLength / ((double)timeperupdate);
 		    delta = updateLength/1000d;
+//		    System.out.println(delta+ " delta");
 //			if(delta > 0.05) delta = 0.05;
 //			if(delta > 1) System.out.println("below 60 FPS");
 			framestaken++;
@@ -263,10 +265,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		//make now like that old state
-//		player.x = originalState.x;
-//		player.y = originalState.y;
-//		player.xspeed = originalState.xspeed;
-//		player.yspeed = originalState.yspeed;
+		player.x = originalState.x;
+		player.y = originalState.y;
+		player.xspeed = originalState.xspeed;
+		player.yspeed = originalState.yspeed;
 
 		//count the difference
 //		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
