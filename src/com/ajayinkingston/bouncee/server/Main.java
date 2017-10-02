@@ -196,9 +196,18 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
-			projectile.update(this, delta);
-			if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
-				projectiles.remove(projectile);
+			if(projectile.dead){
+				if(projectile.frame - projectile.deadframe > 200){
+					projectiles.remove(projectile);
+				}else{
+					projectile.frame ++;
+				}
+			}else{
+				projectile.update(this, delta);
+				if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
+					projectile.dead = true;
+					projectile.deadframe = projectile.frame-1;
+				}
 			}
 		}
 		
