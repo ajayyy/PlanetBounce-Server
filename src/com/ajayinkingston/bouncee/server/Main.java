@@ -102,8 +102,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
         
         planets = planetlist.toArray(new Planet[planetlist.size()]);
         
-        planets = new Planet[1];
-        planets[0] = planetlist.get(0);
+//        planets = new Planet[1];
+//        planets[0] = planetlist.get(0);
         
         Thread thread = new Thread(this);
         thread.start();
@@ -191,6 +191,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			if(handleMovement(movement.player, movement.disabled, movement.direction, movement.frame)) movements.remove(movement);
 		}
 		
+		for(Shot shot: new ArrayList<>(shots)){
+			if(handleShot(shot.player, shot.projectileangle, shot.frame)) shots.remove(shot);
+		}
+		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
 			projectile.update(this, delta);
 			if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
@@ -218,7 +222,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 	}
 	
-	public void affectColidedPlayers(Entity player1, Entity player2){//once the players are collided, this function will deal with them
+	public void affectColidedPlayers(Entity player1, Entity player2) { //once the players are collided, this function will deal with them
 	    //Calculate speeds
 	    
 //		float player1xspeed = (player1.xspeed * (player1.getSize() - player1.getSize()) + (2 * playerstartsize * player2.xspeed)) / (playerstartsize + playerstartsize);
@@ -256,7 +260,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			return false;
 //			return;
 		}
-		player.paused = true;
+//		player.paused = true;
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
@@ -311,11 +315,11 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player.update(this, 1/fps);
 		}
 		
-		player.paused = false;
-		for(int i=0;i<player.pausedStack;i++){
-			player.update(this, 1/fps);
-		}
-		player.pausedStack = 0;
+//		player.paused = false;
+//		for(int i=0;i<player.pausedStack;i++){
+//			player.update(this, 1/fps);
+//		}
+//		player.pausedStack = 0;
 		
 		return true;
 	}
@@ -401,6 +405,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			if(player==null) return;
 			float projectileangle = Float.parseFloat(message.split(" ")[1]);
 			long frame = Long.parseLong(message.split(" ")[2]);// when the action happened
+			
+			shots.add(new Shot(player, projectileangle, frame));
 			
 			for(Player player2:players){
 				if(player2 != player){
