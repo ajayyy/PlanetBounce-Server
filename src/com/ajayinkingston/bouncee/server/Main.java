@@ -367,6 +367,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		//create projectiles
 		Projectile projectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
 		projectiles.add(projectile);
+		
 
 		//call player.update however many missed frames there were
 		double leftoverdelta = 0;

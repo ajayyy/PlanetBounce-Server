@@ -6,9 +6,15 @@ import com.badlogic.gdx.Gdx;
 
 public class Projectile extends Entity{
 	int radius;
+	long frame; //frame currently taken place
 	
 	double distance;
 	long start;
+	
+	ArrayList<OldState> oldstates = new ArrayList<>();
+	
+	boolean dead;
+	long deadframe;
 	
 	public Projectile(double x, double y, int radius, double angle, float speed){
 		this.x = (float) x;
@@ -51,6 +57,10 @@ public class Projectile extends Entity{
 		x+=xspeed*delta;
 		y+=yspeed*delta;
 		distance += Math.abs(xspeed*delta) + Math.abs(yspeed*delta);
+	
+		oldstates.add(new OldState(x, y, xspeed, yspeed, frame, false, false, false));
+		
+		frame++;
 	}
 	
 	
