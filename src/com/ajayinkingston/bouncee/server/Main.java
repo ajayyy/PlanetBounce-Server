@@ -200,7 +200,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				if(projectile.frame - projectile.deadframe > 200){
 					projectiles.remove(projectile);
 				}else{
-					projectile.frame ++;
+					projectile.frame++;
 				}
 			}else{
 				projectile.update(this, delta);
@@ -373,13 +373,34 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		player.yspeed -= (float) (Math.sin(projectileangle) * projectileSpeedChange);
 		player.shot = true;
 		
+		//set all projectiles to proper values
+		for(Projectile projectile: projectiles){
+			OldState state = getOldStateAtFrame(projectile.oldstates, frame);
+			projectile.x = state.x;
+			projectile.y = state.y;
+			projectile.xspeed = state.xspeed;
+			projectile.yspeed = state.yspeed;
+			projectile.frame = state.frame;
+			if(projectile.dead && projectile.frame <= projectile.deadframe){
+				projectile.dead = false;
+			}
+		}
+		
+		//set all players to proper values
+		for(Player player2: players){
+			OldState state = getOldStateAtFrame(player2.oldStates, frame);
+			player2.x = state.x;
+			player2.y = state.y;
+			player2.xspeed = state.xspeed;
+			player2.yspeed = state.yspeed;
+			player2.frames = state.frame;
+		}
+		
 		//create projectiles
 		Projectile projectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
 		projectiles.add(projectile);
 		
-
-		//call player.update however many missed frames there were
-		double leftoverdelta = 0;
+		//call update however many missed frames there were
 		for(int i=0;i<amountremoved;i++){//remove all of the future ones
 			player.left = oldOldStates.get(i).left;
 			player.right = oldOldStates.get(i).right;
@@ -387,19 +408,31 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
 				player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
 			}
-			player.update(this, 1/fps);
+			update(1/fps);
 		}
 		
-		//call projectile.update for each missing frame too
-		for(int i=0;i<amountremoved;i++){
-			projectile.update(this, 1/60.0);
-		}
-
-		//add to old states
-		if(index<player.oldStates.size()-1){
-			player.oldStates.get(index+1).projectileangle = projectileangle;
-			player.oldStates.get(index+1).shot = true;
-		}
+//		//call player.update however many missed frames there were
+//		double leftoverdelta = 0;
+//		for(int i=0;i<amountremoved;i++){//remove all of the future ones
+//			player.left = oldOldStates.get(i).left;
+//			player.right = oldOldStates.get(i).right;
+//			if(oldOldStates.get(i).shot){
+//				player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+//				player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+//			}
+//			player.update(this, 1/fps);
+//		}
+		
+//		//call projectile.update for each missing frame too
+//		for(int i=0;i<amountremoved;i++){
+//			projectile.update(this, 1/fps);
+//		}
+//
+//		//add to old states
+//		if(index<player.oldStates.size()-1){
+//			player.oldStates.get(index+1).projectileangle = projectileangle;
+//			player.oldStates.get(index+1).shot = true;
+//		}
 		
 		return true;
 	}
