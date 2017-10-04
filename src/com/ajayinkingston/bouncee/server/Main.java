@@ -10,6 +10,8 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.badlogic.gdx.scenes.scene2d.actions.Remove;
+
 
 public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	private static final long serialVersionUID = 7131472967027976118L;
@@ -368,11 +370,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		//insert new data
 		
-		//change xspeeds
-		player.xspeed -= (float) (Math.cos(projectileangle) * projectileSpeedChange);
-		player.yspeed -= (float) (Math.sin(projectileangle) * projectileSpeedChange);
-		player.shot = true;
-		
 		//set all projectiles to proper values
 		for(Projectile projectile: projectiles){
 			OldState state = getOldStateAtFrame(projectile.oldstates, frame);
@@ -396,6 +393,11 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.frames = state.frame;
 		}
 		
+		//change xspeeds
+		player.xspeed -= (float) (Math.cos(projectileangle) * projectileSpeedChange);
+		player.yspeed -= (float) (Math.sin(projectileangle) * projectileSpeedChange);
+		player.shot = true;
+		
 		//create projectiles
 		Projectile projectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
 		projectiles.add(projectile);
@@ -403,7 +405,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		//call update however many missed frames there were
 		for(int i=0;i<amountremoved;i++){//remove all of the future ones
 			player.left = oldOldStates.get(i).left;
-			player.right = oldOldStates.get(i).right;
+			player.right = oldOldStates.get(i).right;//do this check for EVERY PLAYER AND ITEM
 			if(oldOldStates.get(i).shot){
 				player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
 				player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
@@ -576,6 +578,19 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		if(atFrame == null) atFrame = oldStates.get(oldStates.size()-1);
 		return atFrame;
+	}
+	
+	public ArrayList<OldState> removeFutureOldStatesFromFrame(ArrayList<OldState> oldStates, long frame){
+		OldState cutoff = getOldStateAtFrame(oldStates, frame);
+		
+		oldStates = new ArrayList<>(oldStates);
+		
+		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
+			oldStates.remove(oldStates.size()-1);
+		}
+		
+		
+		return oldStates;
 	}
 	
 	/*public OldState getOldStateAtTime(ArrayList<OldState> oldStates, long time){
