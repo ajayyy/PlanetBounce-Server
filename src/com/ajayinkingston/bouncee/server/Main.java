@@ -381,6 +381,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			if(projectile.dead && projectile.frame <= projectile.deadframe){
 				projectile.dead = false;
 			}
+			
+			projectile.oldstates = removeFutureOldStatesFromFrame(projectile.oldstates, frame);
 		}
 		
 		//set all players to proper values
@@ -391,6 +393,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.xspeed = state.xspeed;
 			player2.yspeed = state.yspeed;
 			player2.frames = state.frame;
+			
+			player2.oldStates = removeFutureOldStatesFromFrame(player2.oldStates, frame);
 		}
 		
 		//change xspeeds
@@ -589,8 +593,27 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			oldStates.remove(oldStates.size()-1);
 		}
 		
+		return oldStates;
+	}
+	
+	public ArrayList<OldState> removeFutureOldStatesFromOldState(ArrayList<OldState> oldStates, OldState cutoff){
+		oldStates = new ArrayList<>(oldStates);
+		
+		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
+			oldStates.remove(oldStates.size()-1);
+		}
 		
 		return oldStates;
+	}
+	
+	public ArrayList<OldState> getOldStatesAfterOldState(ArrayList<OldState> oldStates, OldState cutoff){
+		ArrayList<OldState> newOldStates = new ArrayList<>(oldStates);
+		
+		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
+			newOldStates.add(oldStates.get(oldStates.indexOf(cutoff)+1));
+		}
+		
+		return newOldStates;
 	}
 	
 	/*public OldState getOldStateAtTime(ArrayList<OldState> oldStates, long time){
