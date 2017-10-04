@@ -25,7 +25,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	int mapsize = 30000;
 	Random random = new Random();
 	
-	int playerstartsize = 50;
+	int playerStartSize = 50;
 	float speed = 500, maxspeed = 500;
 	
 	int targetfps = 60;
@@ -321,6 +321,9 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			if(oldOldStates.get(i).shot){
 				player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
 				player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+				
+				Projectile addedProjectile1 = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(oldOldStates.get(i).projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(oldOldStates.get(i).projectileangle)), projectilesize, oldOldStates.get(i).projectileangle, projectileSpeed);
+				projectiles.add(addedProjectile1);
 			}
 			
 			player.update(this, 1/fps);
@@ -363,12 +366,23 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 //		System.out.println("AMOUNT REMOVED " + amountremoved);
 		int index = player.oldStates.indexOf(originalState);
 		if(index==-1) index = 0;
-		ArrayList<OldState> oldOldStates = new ArrayList<>();
-		for(int i=0;i<amountremoved;i++){//remove all of the future ones
-			oldOldStates.add(player.oldStates.get(index));
-			player.oldStates.remove(index);
-		}
+//		ArrayList<OldState> oldOldStates = new ArrayList<>();
+//		for(int i=0;i<amountremoved;i++){//remove all of the future ones
+//			oldOldStates.add(player.oldStates.get(index));
+//			player.oldStates.remove(index);
+//		}
 		//insert new data
+		
+		//make projectile and player oldOldState variables
+		ArrayList<ArrayList<OldState>> playerOldOldStates = new ArrayList<>();
+		ArrayList<ArrayList<OldState>> projectileOldOldStates = new ArrayList<>();
+		
+		//check for any projectiles created after this frame
+		for(Projectile projectile: new ArrayList<>(projectiles)){
+			if(projectile.frame < amountremoved){
+				projectiles.remove(projectile);
+			}
+		}
 		
 		//set all projectiles to proper values
 		for(Projectile projectile: projectiles){
@@ -382,7 +396,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				projectile.dead = false;
 			}
 			
-			projectile.oldstates = removeFutureOldStatesFromFrame(projectile.oldstates, frame);
+			projectile.oldstates = removeFutureOldStatesFromOldState(projectile.oldstates, state);
+			playerOldOldStates.add(getOldStatesAfterOldState(projectile.oldstates, state));
 		}
 		
 		//set all players to proper values
@@ -395,6 +410,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.frames = state.frame;
 			
 			player2.oldStates = removeFutureOldStatesFromFrame(player2.oldStates, frame);
+			playerOldOldStates.add(getOldStatesAfterOldState(player2.oldStates, state));
 		}
 		
 		//change xspeeds
@@ -403,17 +419,26 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		player.shot = true;
 		
 		//create projectiles
-		Projectile projectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
-		projectiles.add(projectile);
+		Projectile addedProjectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
+		projectiles.add(addedProjectile);
 		
 		//call update however many missed frames there were
 		for(int i=0;i<amountremoved;i++){//remove all of the future ones
-			player.left = oldOldStates.get(i).left;
-			player.right = oldOldStates.get(i).right;//do this check for EVERY PLAYER AND ITEM
-			if(oldOldStates.get(i).shot){
-				player.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
-				player.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+			
+			//iterate through players to make sure all events from oldstate are recalculated
+			for(Player player2: players){
+				ArrayList<OldState> oldOldStates = playerOldOldStates.get(players.indexOf(player2));
+				player2.left = oldOldStates.get(i).left;
+				player2.right = oldOldStates.get(i).right;
+				if(oldOldStates.get(i).shot){
+					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+					player2.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
+					
+					Projectile addedProjectile1 = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(oldOldStates.get(i).projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(oldOldStates.get(i).projectileangle)), projectilesize, oldOldStates.get(i).projectileangle, projectileSpeed);
+					projectiles.add(addedProjectile1);
+				}
 			}
+			
 			update(1/fps);
 		}
 		
@@ -587,13 +612,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	public ArrayList<OldState> removeFutureOldStatesFromFrame(ArrayList<OldState> oldStates, long frame){
 		OldState cutoff = getOldStateAtFrame(oldStates, frame);
 		
-		oldStates = new ArrayList<>(oldStates);
-		
-		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
-			oldStates.remove(oldStates.size()-1);
-		}
-		
-		return oldStates;
+		return removeFutureOldStatesFromOldState(oldStates, cutoff);
 	}
 	
 	public ArrayList<OldState> removeFutureOldStatesFromOldState(ArrayList<OldState> oldStates, OldState cutoff){
@@ -639,7 +658,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 	@Override
 	public void onConnected(int id) {
-		Player newplayer = new Player(id, 0, 800, playerstartsize);
+		Player newplayer = new Player(id, 0, 800, playerStartSize);
 		for(Player player:players){
 			messenger.sendMessageToClient(player.id, "CONNECTED " + id + " " + newplayer.x + " " + newplayer.y + " " + newplayer.xspeed + " " + newplayer.yspeed + " " + newplayer.mass);
 		}
