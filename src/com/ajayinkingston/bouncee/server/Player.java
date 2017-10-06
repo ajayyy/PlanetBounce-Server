@@ -16,6 +16,7 @@ public class Player extends Entity{
 	int pausedStack;
 	
 	boolean shot;//shot this frame
+	float projectileangle;//the angle of that shot if it happened
 	
 //	long rightstart = -1;
 	
@@ -151,12 +152,25 @@ public class Player extends Entity{
 		x += xspeed*delta;
 		y += yspeed*delta;
 		
+		if(shot){
+			Projectile addedProjectile = new Projectile(x + ((getSize() + main.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + main.projectilesize/2) * Math.sin(projectileangle)), main.projectilesize, projectileangle, main.projectileSpeed);
+			main.projectiles.add(addedProjectile);
+			
+			System.out.println("PLAYER SHOOTING" + id);
+			
+			xspeed -= (float) (Math.cos(projectileangle) * main.projectileSpeedChange);
+			yspeed -= (float) (Math.sin(projectileangle) * main.projectileSpeedChange);
+			
+			projectileangle = 0;//reset it again (not nessesary but whatever)
+		}
+		
 		
 //		System.out.println("X: " + x + " Y: " + y + " DELTA: " + delta);
 		
 		//save old states
 		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, shot));
 		if(oldStates.size() > 200) oldStates.remove(0);
+		if(shot) shot = false;//reset it for next frame
 		
 		frames++;
 	}
