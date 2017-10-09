@@ -168,7 +168,12 @@ public class Player extends Entity{
 //		System.out.println("X: " + x + " Y: " + y + " DELTA: " + delta);
 		
 		//save old states
-		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, shot, projectileangle));
+		if(oldStates.size()>1){
+			oldStates.get(oldStates.size()-1).shot = shot;
+			oldStates.get(oldStates.size()-1).projectileangle = projectileangle;
+		}
+		
+		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, false, 0));
 		if(oldStates.size() > 200) oldStates.remove(0);
 		
 		if(shot){

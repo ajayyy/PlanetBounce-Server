@@ -142,7 +142,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			double fulldelta = delta + leftoverdelta;
 			for(double i=fulldelta;i>=1/fps;i-=1/fps){
-				update(1/fps);
+				update(1/fps, false);
 			}
 			futureleftoverdelta = fulldelta%(1/fps);
 
@@ -185,17 +185,19 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 	}
 	
-	public void update(double delta){
+	public void update(double delta, boolean simulation){
 		for(Player player: new ArrayList<Player>(players)){
 			player.update(this, delta);
 		}
 		
-		for(Movement movement: new ArrayList<>(movements)){
-			if(handleMovement(movement.player, movement.disabled, movement.direction, movement.frame)) movements.remove(movement);
-		}
-		
-		for(Shot shot: new ArrayList<>(shots)){
-			if(handleShot(shot.player, shot.projectileangle, shot.frame)) shots.remove(shot);
+		if(!simulation){
+			for(Movement movement: new ArrayList<>(movements)){
+				if(handleMovement(movement.player, movement.disabled, movement.direction, movement.frame)) movements.remove(movement);
+			}
+			
+			for(Shot shot: new ArrayList<>(shots)){
+				if(handleShot(shot.player, shot.projectileangle, shot.frame)) shots.remove(shot);
+			}
 		}
 		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
@@ -477,7 +479,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				}
 			}
 			
-			update(1/fps);
+			update(1/fps, true);
 		}
 		
 //		//call player.update however many missed frames there were
@@ -671,6 +673,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
 			newOldStates.add(oldStates.get(oldStates.indexOf(cutoff)+1));
+			oldStates.remove(oldStates.get(oldStates.indexOf(cutoff)+1));
 		}
 		
 		return newOldStates;
