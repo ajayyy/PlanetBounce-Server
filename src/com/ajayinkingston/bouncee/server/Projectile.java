@@ -29,7 +29,8 @@ public class Projectile extends Entity{
 	}
 	
 	public void update(Main main, double delta){
-		
+		frame++;
+
 		if(Math.abs(xspeed) < friction*delta) xspeed = 0;
 		else if(xspeed>0) xspeed-=friction*delta;
 		else if(xspeed<0) xspeed+=friction*delta; //XXX IF YOU CHANGE THIS CHANGE CLIENT TOO
@@ -59,8 +60,6 @@ public class Projectile extends Entity{
 		distance += Math.abs(xspeed*delta) + Math.abs(yspeed*delta);
 	
 		oldstates.add(new OldState(x, y, xspeed, yspeed, frame, false, false, false));
-		
-		frame++;
 	}
 	
 	

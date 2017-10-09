@@ -350,6 +350,16 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			System.out.println("aslkjdsalkjasjjjdjdsajasldjdas");
 			return false;
 		}
+
+		player.shot = true;
+		player.projectileangle = projectileangle;
+		
+		if(frame == currentFrame){
+			System.out.println("asertyuiute456765rf");
+			return true;
+		}else{
+			System.out.println("aefsrtyu7654322sertyuiute456765rf");
+		}
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
@@ -386,6 +396,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				projectiles.remove(projectile);
 			}
 		}
+		
+		System.out.println((currentFrame - frame) + " asaasfasasdasfliuioelpo");
 		
 		//set all projectiles to proper values
 		for(Projectile projectile: projectiles){
@@ -430,6 +442,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		//call update however many missed frames there were
 		for(int i=0;i<amountremoved;i++){//remove all of the future ones
+			System.out.println("isthisevenrunning????");
 			
 			//iterate through players to make sure all events from oldstate are recalculated
 			for(Player player2: players){

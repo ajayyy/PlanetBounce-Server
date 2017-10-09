@@ -32,6 +32,7 @@ public class Player extends Entity{
 	}
 	
 	public void update(Main main, double delta){
+		frames++;
 		if(paused){
 			pausedStack++;
 			return;
@@ -171,8 +172,6 @@ public class Player extends Entity{
 		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, shot));
 		if(oldStates.size() > 200) oldStates.remove(0);
 		if(shot) shot = false;//reset it for next frame
-		
-		frames++;
 	}
 	
 	public boolean collided(Entity player){
