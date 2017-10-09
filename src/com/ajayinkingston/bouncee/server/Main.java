@@ -186,20 +186,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	}
 	
 	public void update(double delta, boolean simulation){
-		for(Player player: new ArrayList<Player>(players)){
-			player.update(this, delta);
-		}
-		
-		if(!simulation){
-			for(Movement movement: new ArrayList<>(movements)){
-				if(handleMovement(movement.player, movement.disabled, movement.direction, movement.frame)) movements.remove(movement);
-			}
-			
-			for(Shot shot: new ArrayList<>(shots)){
-				if(handleShot(shot.player, shot.projectileangle, shot.frame)) shots.remove(shot);
-			}
-		}
-		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
 			if(projectile.dead){
 				if(projectile.frame - projectile.deadframe > 200){
@@ -213,6 +199,20 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 					projectile.dead = true;
 					projectile.deadframe = projectile.frame-1;
 				}
+			}
+		}
+		
+		for(Player player: new ArrayList<Player>(players)){
+			player.update(this, delta);
+		}
+		
+		if(!simulation){
+			for(Movement movement: new ArrayList<>(movements)){
+				if(handleMovement(movement.player, movement.disabled, movement.direction, movement.frame)) movements.remove(movement);
+			}
+			
+			for(Shot shot: new ArrayList<>(shots)){
+				if(handleShot(shot.player, shot.projectileangle, shot.frame)) shots.remove(shot);
 			}
 		}
 		
@@ -354,8 +354,9 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			return false;
 		}
 
-		player.shot = true;
-		player.projectileangle = projectileangle;
+//		player.shot = true;
+//		player.projectileangle = projectileangle;
+		player.shoot(this, projectileangle);
 		
 		if(frame == currentFrame){
 			System.out.println("asertyuiute456765rf");
