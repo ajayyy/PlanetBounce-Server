@@ -11,6 +11,7 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 import com.badlogic.gdx.scenes.scene2d.actions.Remove;
+import com.badlogic.gdx.utils.Array;
 
 
 public class Main extends Canvas implements ClientMessageReceiver, Runnable{
@@ -276,7 +277,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
-			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot);
+			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot, player.projectileangle);
 			System.out.println("--__--");
 		}
 		
@@ -363,7 +364,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
-			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot);
+			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot, player.projectileangle);
 		}
 		
 //		//make now like that old state
@@ -428,6 +429,15 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.oldStates = removeFutureOldStatesFromOldState(player2.oldStates, state);
 		}
 		
+		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
+		
+		for(Player player2: new ArrayList<>(players)){
+			if(player2.frames < amountremoved){//because amount removed would be the amount of frames that have happened since, if this was created on that frame, then the frame - amount removed would be 0
+				nonSpawnedPlayers.add(player2);
+				players.remove(player2);
+			}
+		}
+		
 		//change xspeeds
 //		player.xspeed -= (float) (Math.cos(projectileangle) * projectileSpeedChange);
 //		player.yspeed -= (float) (Math.sin(projectileangle) * projectileSpeedChange);
@@ -443,6 +453,13 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		//call update however many missed frames there were
 		for(int i=0;i<amountremoved;i++){//remove all of the future ones
 			System.out.println("isthisevenrunning????");
+			
+			for(Player player2: new ArrayList<>(nonSpawnedPlayers)){
+				if(player.frames < amountremoved-i){
+					players.add(player2);
+					nonSpawnedPlayers.remove(player2);
+				}
+			}
 			
 			//iterate through players to make sure all events from oldstate are recalculated
 			for(Player player2: players){

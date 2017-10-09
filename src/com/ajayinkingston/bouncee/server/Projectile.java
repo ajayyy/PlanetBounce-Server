@@ -59,7 +59,7 @@ public class Projectile extends Entity{
 		y+=yspeed*delta;
 		distance += Math.abs(xspeed*delta) + Math.abs(yspeed*delta);
 	
-		oldstates.add(new OldState(x, y, xspeed, yspeed, frame, false, false, false));
+		oldstates.add(new OldState(x, y, xspeed, yspeed, frame, false, false, false, 0));
 	}
 	
 	

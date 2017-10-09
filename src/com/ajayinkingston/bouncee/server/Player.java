@@ -32,6 +32,11 @@ public class Player extends Entity{
 	}
 	
 	public void update(Main main, double delta){
+		if(shot){
+			shot = false;//reset it
+			projectileangle = 0;
+		}
+		
 		frames++;
 		if(paused){
 			pausedStack++;
@@ -162,16 +167,14 @@ public class Player extends Entity{
 			xspeed -= (float) (Math.cos(projectileangle) * main.projectileSpeedChange);
 			yspeed -= (float) (Math.sin(projectileangle) * main.projectileSpeedChange);
 			
-			projectileangle = 0;//reset it again (not nessesary but whatever)
 		}
 		
 		
 //		System.out.println("X: " + x + " Y: " + y + " DELTA: " + delta);
 		
 		//save old states
-		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, shot));
+		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, shot, projectileangle));
 		if(oldStates.size() > 200) oldStates.remove(0);
-		if(shot) shot = false;//reset it for next frame
 	}
 	
 	public boolean collided(Entity player){
