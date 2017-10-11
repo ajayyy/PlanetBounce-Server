@@ -279,7 +279,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
-			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot, player.projectileangle);
+			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
 			System.out.println("--__--");
 		}
 		
@@ -367,7 +367,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
-			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, player.shot, player.projectileangle);
+			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
 		}
 		
 //		//make now like that old state
@@ -446,8 +446,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 //		player.yspeed -= (float) (Math.sin(projectileangle) * projectileSpeedChange);
 		
 		//set the player shot variable and projectileangle
-		player.shot = true;
-		player.projectileangle = projectileangle;
+//		player.shot = true;
+//		player.projectileangle = projectileangle;//TODO CALL METHOD
 		
 		//create projectiles
 //		Projectile addedProjectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
@@ -469,9 +469,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				ArrayList<OldState> oldOldStates = playerOldOldStates.get(players.indexOf(player2));
 				player2.left = oldOldStates.get(i).left;
 				player2.right = oldOldStates.get(i).right;
-				if(oldOldStates.get(i).shot && !player2.shot){
-					player2.shot = true;
-					player2.projectileangle = oldOldStates.get(i).projectileangle;
+				if(oldOldStates.get(i).shot){
+					player2.shoot(this, oldOldStates.get(i).projectileangle);
+//					player2.shot = true;
+//					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
 //					player2.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
 //					

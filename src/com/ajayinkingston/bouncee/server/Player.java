@@ -15,8 +15,8 @@ public class Player extends Entity{
 	boolean paused;
 	int pausedStack;
 	
-	boolean shot;//shot this frame
-	float projectileangle;//the angle of that shot if it happened
+//	boolean shot;//shot this frame   DEPRECATED NOW THERE IS A METHOD
+//	float projectileangle;//the angle of that shot if it happened
 	
 //	long rightstart = -1;
 	
@@ -177,23 +177,23 @@ public class Player extends Entity{
 		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, false, 0));
 		if(oldStates.size() > 200) oldStates.remove(0);
 		
-		if(shot){
-			shot = false;//reset it
-			projectileangle = 0;
-		}
+//		if(shot){
+//			shot = false;//reset it
+//			projectileangle = 0;
+//		}
 	}
 	
-	public void shoot(Main main, float projectileAngle){
+	public void shoot(Main main, float projectileangle){
 		Projectile addedProjectile = new Projectile(x + ((getSize() + main.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + main.projectilesize/2) * Math.sin(projectileangle)), main.projectilesize, projectileangle, main.projectileSpeed);
 		main.projectiles.add(addedProjectile);
 		
 		System.out.println("PLAYER SHOOTING" + id);
 		
-		xspeed -= (float) (Math.cos(projectileangle) * main.projectileSpeedChange);
-		yspeed -= (float) (Math.sin(projectileangle) * main.projectileSpeedChange);
+		xspeed -= (Math.cos(projectileangle) * main.projectileSpeedChange);
+		yspeed -= (Math.sin(projectileangle) * main.projectileSpeedChange);
 		
 		if(oldStates.size()>1){
-			oldStates.get(oldStates.size()-1).shot = shot;
+			oldStates.get(oldStates.size()-1).shot = true;
 			oldStates.get(oldStates.size()-1).projectileangle = projectileangle;
 		}
 	}
