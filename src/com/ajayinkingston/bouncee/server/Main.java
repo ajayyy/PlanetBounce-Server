@@ -356,14 +356,13 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 //		player.shot = true;
 //		player.projectileangle = projectileangle;
-		player.shoot(this, projectileangle);
 		
-		if(frame == currentFrame){
-			System.out.println("asertyuiute456765rf");
-			return true;
-		}else{
-			System.out.println("aefsrtyu7654322sertyuiute456765rf");
-		}
+//		if(frame == currentFrame){
+//			System.out.println("asertyuiute456765rf");
+//			return true;
+//		}else{
+//			System.out.println("aefsrtyu7654322sertyuiute456765rf");
+//		}
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
@@ -431,6 +430,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			playerOldOldStates.add(getOldStatesAfterOldState(player2.oldStates, state));
 			player2.oldStates = removeFutureOldStatesFromOldState(player2.oldStates, state);
 		}
+		
+		player.shoot(this, projectileangle);
 		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
