@@ -95,7 +95,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	        }
 	        size = center.radius;
 	        x = center.y + bufferdist*3;
-	//        y += size*6;
+	//        y += size*6;.
 	        while(x < mapsize){
 	        	float nsize = random.nextInt(200)+100;
 	        	x = bufferdist*6-nsize + x;
