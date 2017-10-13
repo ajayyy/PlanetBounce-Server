@@ -257,10 +257,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	    player2.xspeed = player2xspeed;
 	    player2.yspeed = player2yspeed;
 	    
-	    player1.x += player1xspeed * delta;
-	    player1.y += player1yspeed * delta;
-	    player2.x += player2xspeed * delta;
-	    player2.y += player2yspeed * delta;
+	    player1.x += player1xspeed * 1/fps;
+	    player1.y += player1yspeed * 1/fps;
+	    player2.x += player2xspeed * 1/fps;
+	    player2.y += player2yspeed * 1/fps;
 	}
 	
 	public boolean handleMovement(Player player, boolean disable, boolean direction, long frame) { //returns true if dealt with

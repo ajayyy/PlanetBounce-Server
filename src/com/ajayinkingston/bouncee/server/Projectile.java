@@ -31,13 +31,6 @@ public class Projectile extends Entity{
 	public void update(Main main, double delta){
 		frame++;
 
-		if(Math.abs(xspeed) < friction*delta) xspeed = 0;
-		else if(xspeed>0) xspeed-=friction*delta;
-		else if(xspeed<0) xspeed+=friction*delta; //XXX IF YOU CHANGE THIS CHANGE CLIENT TOO
-		if(Math.abs(yspeed) < friction*delta) yspeed = 0;
-		else if(yspeed>0) yspeed-=friction*delta;
-		else if(yspeed<0) yspeed+=friction*delta;
-		
 		ArrayList<Planet> closestplanets = main.getClosestPlanets(this);
 		float gravityx = 0;
 		float gravityy = 0;
@@ -54,6 +47,13 @@ public class Projectile extends Entity{
 		}
 		xspeed += gravityx * delta;
 		yspeed += gravityy * delta;
+		
+		if(Math.abs(xspeed) < friction*delta) xspeed = 0;
+		else if(xspeed>0) xspeed-=friction*delta;
+		else if(xspeed<0) xspeed+=friction*delta; //XXX IF YOU CHANGE THIS CHANGE CLIENT TOO
+		if(Math.abs(yspeed) < friction*delta) yspeed = 0;
+		else if(yspeed>0) yspeed-=friction*delta;
+		else if(yspeed<0) yspeed+=friction*delta;
 		
 		x+=xspeed*delta;
 		y+=yspeed*delta;
