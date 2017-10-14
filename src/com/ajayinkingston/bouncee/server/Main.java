@@ -682,7 +682,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		return closestangle;
 	}
 	
-	public boolean isTouchingPlanet(Entity player, Planet planet){
+	public boolean isTouchingPlanet(Entity player, Planet planet) {
 		return Math.pow(Math.abs(player.x - planet.x), 2) + Math.pow(Math.abs(player.y - planet.y), 2) < Math.pow(player.getRadius() + planet.radius, 2);
 	}
 	
