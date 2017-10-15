@@ -1,4 +1,4 @@
-package com.ajayinkingston.bouncee.server;
+package com.ajayinkingston.planets.server;
 
 import java.awt.Canvas;
 import java.awt.Color;

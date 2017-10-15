@@ -1,4 +1,4 @@
-package com.ajayinkingston.bouncee.server;
+package com.ajayinkingston.planets.server;
 
 public class OldState {
 	float x,y,xspeed,yspeed,projectileangle;

@@ -1,4 +1,4 @@
-package com.ajayinkingston.bouncee.server;
+package com.ajayinkingston.planets.server;
 
 //From the Java_websocket implementation (Server side)
 import java.io.IOException;

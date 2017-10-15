@@ -1,4 +1,4 @@
-package com.ajayinkingston.bouncee.server;
+package com.ajayinkingston.planets.server;
 
 public class Food {
 	double angle;//the angle it is located on the planet

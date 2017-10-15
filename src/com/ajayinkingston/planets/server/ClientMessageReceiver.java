@@ -1,4 +1,4 @@
-package com.ajayinkingston.bouncee.server;
+package com.ajayinkingston.planets.server;
 
 public interface ClientMessageReceiver {
 	public void onMessageRecieved(String message, int id);
