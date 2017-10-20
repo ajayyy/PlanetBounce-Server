@@ -142,12 +142,16 @@ public class Player extends Entity{
 		}
 		
 		//friction
-		if(Math.abs(xspeed) < friction*delta) xspeed = 0;
-		else if(xspeed>0) xspeed-=friction*delta;
-		else if(xspeed<0) xspeed+=friction*delta;
-		if(Math.abs(yspeed) < friction*delta) yspeed = 0;
-		else if(yspeed>0) yspeed-=friction*delta;
-		else if(yspeed<0) yspeed+=friction*delta;
+//		if(Math.abs(xspeed) < friction*delta) xspeed = 0;
+//		else if(xspeed>0) xspeed-=friction*delta;
+//		else if(xspeed<0) xspeed+=friction*delta;
+//		if(Math.abs(yspeed) < friction*delta) yspeed = 0;
+//		else if(yspeed>0) yspeed-=friction*delta;
+//		else if(yspeed<0) yspeed+=friction*delta;
+		
+		double movementAngle = Math.atan2(yspeed, xspeed);
+		xspeed -= Math.cos(movementAngle) * friction * delta;
+		yspeed -= Math.sin(movementAngle) * friction * delta;
 		
 		//add all speeds
 		x += xspeed*delta;
