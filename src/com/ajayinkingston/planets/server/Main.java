@@ -195,7 +195,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				}
 			}else{
 				projectile.update(this, delta);//
-				if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile))){
+				if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile, planets))){
 					projectile.dead = true;
 					projectile.deadframe = projectile.frame-1;
 				}
@@ -580,7 +580,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		if(message.startsWith("s")){
 			
 			//click (shoot)
-			Player player = getPlayer(id);
+			Player player = getPlayer(id, players);
 			if(player==null) return;
 			float projectileangle = Float.parseFloat(message.split(" ")[1]);
 			long frame = Long.parseLong(message.split(" ")[2]);// when the action happened
@@ -600,7 +600,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				disable = true;
 				message = message.substring(1);
 			}
-			Player player = getPlayer(id);
+			Player player = getPlayer(id, players);
 			if(player==null) return;
 			int direction = Integer.parseInt(message.split(" ")[0]);
 			long frame = Long.parseLong(message.split(" ")[1]);// when the action happened
@@ -620,7 +620,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 	}
 	
-	public int getIndexOf(Object toSearch, Object[] tab ){
+	public static int getIndexOf(Object toSearch, Object[] tab ){
 	  for( int i=0; i< tab.length ; i ++ )
 	    if( tab[ i ] == toSearch)
 	     return i;
@@ -628,7 +628,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	  return -1;
 	}
 	
-	public ArrayList<Planet> getClosestPlanets(Entity player) {
+	public static ArrayList<Planet> getClosestPlanets(Entity player, Planet[] planets) {
 		ArrayList<Planet> closeplanets = new ArrayList<>();
 		Planet closest = null;
 		float closestdistance = 0;
@@ -670,23 +670,23 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		return closeplanets;
 	}
 	
-	public Planet getClosestPlanet(Entity player){
-		ArrayList<Planet> closestplanets = getClosestPlanets(player);
+	public static Planet getClosestPlanet(Entity player, Planet[] planets){
+		ArrayList<Planet> closestplanets = getClosestPlanets(player, planets);
 		return closestplanets.get(0);
 	}
 	
-	public double getClosestAngle(Entity player){
-		Planet planet = getClosestPlanet(player);
+	public static double getClosestAngle(Entity player, Planet[] planets){
+		Planet planet = getClosestPlanet(player, planets);
 		double angle = Math.atan2((player.y) - (planet.y), (player.x) - (planet.x));
 		double closestangle = angle - Math.PI;
 		return closestangle;
 	}
 	
-	public boolean isTouchingPlanet(Entity player, Planet planet) {
+	public static boolean isTouchingPlanet(Entity player, Planet planet) {
 		return Math.pow(Math.abs(player.x - planet.x), 2) + Math.pow(Math.abs(player.y - planet.y), 2) < Math.pow(player.getRadius() + planet.radius, 2);
 	}
 	
-	public double getAngleFromPlanet(Player player, Planet planet){
+	public static double getAngleFromPlanet(Player player, Planet planet){
 		double angle = Math.atan2((player.y) - (planet.y), (player.x) - (planet.x));
 		double closestangle = angle - Math.PI;
 		return closestangle;
@@ -694,7 +694,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	
 	
 	
-	public Player getPlayer(int id){
+	public static Player getPlayer(int id, ArrayList<Player> players){
 		for(Player player:players){
 			if(player.id == id){
 				return player;
@@ -704,7 +704,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		return null;
 	}
 
-	public OldState getOldStateAtFrame(ArrayList<OldState> oldStates, long frame){
+	public static OldState getOldStateAtFrame(ArrayList<OldState> oldStates, long frame){
 		if(oldStates.size() == 0) return null;
 		
 		OldState atFrame = null;
@@ -717,13 +717,13 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		return atFrame;
 	}
 	
-	public ArrayList<OldState> removeFutureOldStatesFromFrame(ArrayList<OldState> oldStates, long frame){
+	public static ArrayList<OldState> removeFutureOldStatesFromFrame(ArrayList<OldState> oldStates, long frame){
 		OldState cutoff = getOldStateAtFrame(oldStates, frame);
 		
 		return removeFutureOldStatesFromOldState(oldStates, cutoff);
 	}
 	
-	public ArrayList<OldState> removeFutureOldStatesFromOldState(ArrayList<OldState> oldStates, OldState cutoff){
+	public static ArrayList<OldState> removeFutureOldStatesFromOldState(ArrayList<OldState> oldStates, OldState cutoff){
 		oldStates = new ArrayList<>(oldStates);
 		
 		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
@@ -733,7 +733,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		return oldStates;
 	}
 	
-	public ArrayList<OldState> getOldStatesAfterOldState(ArrayList<OldState> oldStates, OldState cutoff){
+	public static ArrayList<OldState> getOldStatesAfterOldState(ArrayList<OldState> oldStates, OldState cutoff){
 		ArrayList<OldState> newOldStates = new ArrayList<>(oldStates);
 		
 		while(oldStates.size() > oldStates.indexOf(cutoff)+1){
@@ -786,8 +786,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 	@Override
 	public void onDisconnected(int id) {
-		players.remove(getPlayer(id));
-		for(Player player:players){
+		players.remove(getPlayer(id, players));
+		for(Player player: players){
 			messenger.sendMessageToClient(player.id, "DISCONNECTED " + id);
 		}
 	}
