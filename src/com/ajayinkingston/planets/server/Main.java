@@ -381,7 +381,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 					player2.right = oldOldStates.get(i).right;
 				}
 				if(oldOldStates.get(i).shot){
-					player2.shoot(this, oldOldStates.get(i).projectileangle);
+					player2.shoot(this, oldOldStates.get(i).projectileAngle);
 //					player2.shot = true;
 //					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
@@ -533,7 +533,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				player2.left = oldOldStates.get(i).left;
 				player2.right = oldOldStates.get(i).right;
 				if(oldOldStates.get(i).shot){
-					player2.shoot(this, oldOldStates.get(i).projectileangle);
+					player2.shoot(this, oldOldStates.get(i).projectileAngle);
 //					player2.shot = true;
 //					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
@@ -792,9 +792,4 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 	}
 	
-	//util methods
-	public double getDotProduct(double x1, double y1, double x2, double y2){
-		return x1 * x2 + y1 * y2;
-	}
-
 }

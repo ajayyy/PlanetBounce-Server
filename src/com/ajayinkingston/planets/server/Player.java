@@ -3,7 +3,7 @@ package com.ajayinkingston.planets.server;
 import java.util.ArrayList;
 
 public class Player extends Entity{
-	int id;
+	public int id;
 	
 	boolean left,right;//now going to be used
 	
@@ -86,9 +86,9 @@ public class Player extends Entity{
 			System.out.println(frames + " frame bounced at");
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
 			
-			double ux = 2 * (main.getDotProduct(xspeed, yspeed, Math.cos(angle), Math.sin(angle))) * Math.cos(angle);
+			double ux = 2 * (getDotProduct(xspeed, yspeed, Math.cos(angle), Math.sin(angle))) * Math.cos(angle);
 			double wx = xspeed - ux;
-			double uy = 2 * (main.getDotProduct(xspeed, yspeed, Math.cos(angle), Math.sin(angle))) * Math.sin(angle);
+			double uy = 2 * (getDotProduct(xspeed, yspeed, Math.cos(angle), Math.sin(angle))) * Math.sin(angle);
 			double wy = yspeed - uy;
 			xspeed = (float) (wx - ux);
 			yspeed = (float) (wy - uy);
@@ -198,7 +198,7 @@ public class Player extends Entity{
 		
 		if(oldStates.size()>1){
 			oldStates.get(oldStates.size()-1).shot = true;
-			oldStates.get(oldStates.size()-1).projectileangle = projectileangle;
+			oldStates.get(oldStates.size()-1).projectileAngle = projectileangle;
 		}
 	}
 	
@@ -213,4 +213,5 @@ public class Player extends Entity{
 		}
 		return false;
 	}
+	
 }

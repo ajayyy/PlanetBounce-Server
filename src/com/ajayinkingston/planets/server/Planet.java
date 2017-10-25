@@ -3,13 +3,13 @@ package com.ajayinkingston.planets.server;
 import java.util.Random;
 
 public class Planet {
-	float x,y,radius;
+	public float x,y,radius;
 	
-	float gravityhelperconstant = -3000;//constant that helps calculate gravity (name has been fixed :) )
+	public float gravityhelperconstant = -3000;//constant that helps calculate gravity (name has been fixed :) )
 	
-	float bounceheight;
+	public float bounceheight;
 	
-	Food[] food;
+	public Food[] food;
 	public Planet(float x, float y, float radius){
 		this.x = x;
 		this.y = y;

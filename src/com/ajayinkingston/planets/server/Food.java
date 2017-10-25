@@ -1,9 +1,9 @@
 package com.ajayinkingston.planets.server;
 
 public class Food {
-	double angle;//the angle it is located on the planet
-	private int amount;//point amount
-	boolean enabled; //if someone has collected it or something
+	public double angle;//the angle it is located on the planet
+	public int amount;//point amount
+	public boolean enabled; //if someone has collected it or something
 	public Food(double angle, int amount){
 		this.angle = angle;
 		this.amount = amount;
@@ -15,6 +15,6 @@ public class Food {
 	}
 	
 	public int getSize(){
-		return (int) (amount * 4)+70;
+		return (int) (amount * 4)+50;
 	}
 }
