@@ -36,9 +36,9 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	long lastcap = System.currentTimeMillis();//last variable for capping fps
 	long diff = System.currentTimeMillis();
 	
-	float projectileSpeedChange = 250;
-	float projectileSpeed = 1000;
-	int projectilesize = 5;
+	public static float projectileSpeedChange = 250;
+	public static float projectileSpeed = 1000;
+	public static int projectilesize = 5;
 	ArrayList<Projectile> projectiles = new ArrayList<>();
 	
 	double leftoverdelta; //delta left over after the 40fps
@@ -381,7 +381,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 					player2.right = oldOldStates.get(i).right;
 				}
 				if(oldOldStates.get(i).shot){
-					player2.shoot(this, oldOldStates.get(i).projectileAngle);
+					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles);
 //					player2.shot = true;
 //					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
@@ -493,7 +493,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.oldStates = removeFutureOldStatesFromOldState(player2.oldStates, state);
 		}
 		
-		player.shoot(this, projectileangle);
+		player.shoot(projectileangle, projectiles);
 		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
@@ -533,7 +533,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				player2.left = oldOldStates.get(i).left;
 				player2.right = oldOldStates.get(i).right;
 				if(oldOldStates.get(i).shot){
-					player2.shoot(this, oldOldStates.get(i).projectileAngle);
+					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles);
 //					player2.shot = true;
 //					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);

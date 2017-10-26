@@ -2,8 +2,6 @@ package com.ajayinkingston.planets.server;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
-
 public class Projectile extends Entity{
 	int radius;
 	long frame; //frame currently taken place
@@ -31,7 +29,7 @@ public class Projectile extends Entity{
 	public void update(Main main, double delta){
 		frame++;
 
-		ArrayList<Planet> closestplanets = main.getClosestPlanets(this, main.planets);
+		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, main.planets);
 		float gravityx = 0;
 		float gravityy = 0;
 		for(Planet planet:closestplanets){

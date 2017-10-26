@@ -187,14 +187,14 @@ public class Player extends Entity{
 //		}
 	}
 	
-	public void shoot(Main main, float projectileangle){
-		Projectile addedProjectile = new Projectile(x + ((getSize() + main.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + main.projectilesize/2) * Math.sin(projectileangle)), main.projectilesize, projectileangle, main.projectileSpeed);
-		main.projectiles.add(addedProjectile);
+	public void shoot(float projectileangle, ArrayList<Projectile> projectiles){
+		Projectile addedProjectile = new Projectile(x + ((getSize() + Main.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + Main.projectilesize/2) * Math.sin(projectileangle)), Main.projectilesize, projectileangle, Main.projectileSpeed);
+		projectiles.add(addedProjectile);
 		
 		System.out.println("PLAYER SHOOTING" + id);
 		
-		xspeed -= (Math.cos(projectileangle) * main.projectileSpeedChange);
-		yspeed -= (Math.sin(projectileangle) * main.projectileSpeedChange);
+		xspeed -= (Math.cos(projectileangle) * Main.projectileSpeedChange);
+		yspeed -= (Math.sin(projectileangle) * Main.projectileSpeedChange);
 		
 		if(oldStates.size()>1){
 			oldStates.get(oldStates.size()-1).shot = true;
