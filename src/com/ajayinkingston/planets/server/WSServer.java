@@ -60,6 +60,8 @@ public class WSServer
 				
 				if (arg1.equals("MSG_REQUEST_ID"))
 				{
+					
+					System.out.println("Client Connected!");
 //					long start = System.currentTimeMillis();
 					arg0.send("MSG_SEND_ID " + clientId);
 					
@@ -71,7 +73,7 @@ public class WSServer
 					//what is the diffference in time/2   that is latency
 					clientId++;
 					nClients++;
-					if(clientId>Integer.MAX_VALUE-50) clientId = 0;
+					if(clientId>Integer.MAX_VALUE-50) clientId = 0; //-50 just in case something goes wrong before then
 				}
 				else{
 					int id = -20;
@@ -82,7 +84,7 @@ public class WSServer
 							id = c.clientID;
 						}
 					}
-					if(id==-20) System.out.println("MESSAGE FROM PLAYER WHO HAS LEFT");
+					if(id==-20) System.err.println("MESSAGE FROM PLAYER WHO HAS LEFT");
 					else s.onMessage(arg1, id); //High level message
 
 				}

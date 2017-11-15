@@ -1,8 +1,8 @@
 package com.ajayinkingston.planets.server;
 
 public class Shot {
-	long frame;
-	float projectileangle;
+	public long frame;
+	public float projectileangle;
 	
 	Player player;
 	public Shot(Player player, float projectileangle, long frame){

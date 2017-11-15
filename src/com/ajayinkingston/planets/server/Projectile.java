@@ -3,16 +3,16 @@ package com.ajayinkingston.planets.server;
 import java.util.ArrayList;
 
 public class Projectile extends Entity{
-	int radius;
-	long frame; //frame currently taken place
+	public int radius;
+	public long frame; //frame currently taken place
 	
-	double distance;
-	long start;
+	public double distance;
+	public long start;
 	
-	ArrayList<OldState> oldstates = new ArrayList<>();
+	public ArrayList<OldState> oldstates = new ArrayList<>();
 	
-	boolean dead;
-	long deadframe;
+	public boolean dead;
+	public long deadframe;
 	
 	public Projectile(double x, double y, int radius, double angle, float speed){
 		this.x = (float) x;
@@ -26,10 +26,10 @@ public class Projectile extends Entity{
 		start = System.currentTimeMillis();
 	}
 	
-	public void update(Main main, double delta){
+	public void update(Data data, double delta){
 		frame++;
 
-		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, main.planets);
+		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, data.planets);
 		float gravityx = 0;
 		float gravityy = 0;
 		for(Planet planet:closestplanets){

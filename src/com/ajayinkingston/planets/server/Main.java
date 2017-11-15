@@ -19,15 +19,11 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 	WebSocketServerMessenger messenger;
 	
-	ArrayList<Player> players = new ArrayList<>();
-	
-	Planet[] planets = new Planet[1];
-	
 	int mapsize = 30000;
 	Random random = new Random();
 	
 	int playerStartSize = 50;
-	float speed = 500, maxspeed = 500;
+	float maxspeed = 500;
 	
 	int targetfps = 60;
 	long timeperupdate = 1000/targetfps,last;
@@ -35,11 +31,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	
 	long lastcap = System.currentTimeMillis();//last variable for capping fps
 	long diff = System.currentTimeMillis();
-	
-	public static float projectileSpeedChange = 250;
-	public static float projectileSpeed = 1000;
-	public static int projectilesize = 5;
-	ArrayList<Projectile> projectiles = new ArrayList<>();
 	
 	double leftoverdelta; //delta left over after the 40fps
 	double futureleftoverdelta; //first this variable is set, then leftoverdelta becomes this by the end of the frame
@@ -50,6 +41,13 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	
 	ArrayList<Movement> movements = new ArrayList<>(); //movements made by clients, added to this list so that they can all be processed in the same frame;
 	ArrayList<Shot> shots = new ArrayList<>();
+	
+	Data data; // where data is saved
+	
+	//for compatibility purposes, just the variables from data
+	public ArrayList<Player> players = new ArrayList<>();
+	public Planet[] planets = new Planet[0];
+	public ArrayList<Projectile> projectiles = new ArrayList<>();
 	
 	public static void main(String[] args){
 		new Main();
@@ -103,10 +101,16 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	        }
         }
         
-        planets = planetlist.toArray(new Planet[planetlist.size()]);
+        data = new Data();
         
-        planets = new Planet[1];
-        planets[0] = planetlist.get(0);
+        data.planets = planetlist.toArray(new Planet[planetlist.size()]);
+        
+        data.planets = new Planet[1];
+        data.planets[0] = planetlist.get(0);
+        
+		players = data.players;
+		planets = data.planets;
+		projectiles = data.projectiles;
         
         Thread thread = new Thread(this);
         thread.start();
@@ -144,7 +148,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			for(double i=fulldelta;i>=1/fps;i-=1/fps){
 				update(1/fps, false);
 			}
-			futureleftoverdelta = fulldelta%(1/fps);
+			futureleftoverdelta = fulldelta % (1/fps);
 
 			BufferStrategy s = getBufferStrategy();
 			if(s!=null){
@@ -186,6 +190,11 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	}
 	
 	public void update(double delta, boolean simulation){
+		//update the variables (since they are actually properly stored in data)
+		players = data.players;
+		planets = data.planets;
+		projectiles = data.projectiles;
+		
 		for(Projectile projectile: new ArrayList<>(projectiles)){
 			if(projectile.dead){
 				if(projectile.frame - projectile.deadframe > 200){
@@ -194,7 +203,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 					projectile.frame++;
 				}
 			}else{
-				projectile.update(this, delta);//
+				projectile.update(data, delta);//
 				if(System.currentTimeMillis() - projectile.start > 4500 || isTouchingPlanet(projectile, getClosestPlanet(projectile, planets))){
 					projectile.dead = true;
 					projectile.deadframe = projectile.frame-1;
@@ -203,7 +212,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		for(Player player: new ArrayList<Player>(players)){
-			player.update(this, delta);
+			player.update(data, delta);
+			player.sendDataToClient(this, data);
 		}
 		
 		if(!simulation){
@@ -381,7 +391,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 					player2.right = oldOldStates.get(i).right;
 				}
 				if(oldOldStates.get(i).shot){
-					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles);
+					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles, Projectile.class);
 //					player2.shot = true;
 //					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
@@ -493,7 +503,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.oldStates = removeFutureOldStatesFromOldState(player2.oldStates, state);
 		}
 		
-		player.shoot(projectileangle, projectiles);
+		player.shoot(projectileangle, projectiles, Projectile.class);
 		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
@@ -533,7 +543,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				player2.left = oldOldStates.get(i).left;
 				player2.right = oldOldStates.get(i).right;
 				if(oldOldStates.get(i).shot){
-					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles);
+					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles, Projectile.class);
 //					player2.shot = true;
 //					player2.projectileangle = oldOldStates.get(i).projectileangle;
 //					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
@@ -767,6 +777,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 	@Override
 	public void onConnected(int id) {
+		System.out.println("Player connected");
+		
 		Player newplayer = new Player(id, 0, 800, playerStartSize);
 		for(Player player:players){
 			messenger.sendMessageToClient(player.id, "CONNECTED " + id + " " + newplayer.x + " " + newplayer.y + " " + newplayer.xspeed + " " + newplayer.yspeed + " " + newplayer.mass);
@@ -774,10 +786,11 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		for(Player player:players){
 			messenger.sendMessageToClient(id, "CONNECTED " + player.id + " " + player.x + " " + player.y + " " + player.xspeed + " " + player.yspeed + " " + player.mass);
 		}
-		for(int i=0;i<planets.length;i++){
-			messenger.sendMessageToClient(id, "PLANET " + planets[i].x + " " + planets[i].y + " " + planets[i].radius + " " + planets[i].food.length);
-			for(int s=0;s<planets[i].food.length;s++){
-				messenger.sendMessageToClient(id, "FOOD " + i + " " + s + " " + planets[i].food[s].enabled + " " + planets[i].food[s].angle + " " + planets[i].food[s].getAmount());
+		for(int i=0;i<data.planets.length;i++){
+			System.out.println("sent data for planet");
+			messenger.sendMessageToClient(id, "PLANET " + data.planets[i].x + " " + data.planets[i].y + " " + data.planets[i].radius + " " + data.planets[i].food.length);
+			for(int s=0;s<data.planets[i].food.length;s++){
+				messenger.sendMessageToClient(id, "FOOD " + i + " " + s + " " + data.planets[i].food[s].enabled + " " + data.planets[i].food[s].angle + " " + data.planets[i].food[s].getAmount());
 			}
 		}
 		messenger.sendMessageToClient(id, "START");

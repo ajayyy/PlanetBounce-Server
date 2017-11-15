@@ -1,19 +1,21 @@
 package com.ajayinkingston.planets.server;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class Player extends Entity{
 	public int id;
 	
-	boolean left,right;//now going to be used
+	public boolean left,right;//now going to be used
 	
-	long frames; //amount of frames passed
-	long lastChecked = System.currentTimeMillis();//last time checked client if they have proper x
+	public long frames; //amount of frames passed
+	public long lastChecked = System.currentTimeMillis();//last time checked client if they have proper x
 	
-	ArrayList<OldState> oldStates = new ArrayList<>();
+	public ArrayList<OldState> oldStates = new ArrayList<>();
 	
-	boolean paused;
-	int pausedStack;
+	public boolean paused;
+	public int pausedStack;
 	
 //	boolean shot;//shot this frame   DEPRECATED NOW THERE IS A METHOD
 //	float projectileangle;//the angle of that shot if it happened
@@ -31,7 +33,30 @@ public class Player extends Entity{
 		lastChecked = System.currentTimeMillis();
 	}
 	
-	public void update(Main main, double delta){
+	public void sendDataToClient(Main main, Data data){
+//		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
+		if(true){
+			main.messenger.sendMessageToAll("CHECK " + id + " " + x + " " + y + " " + xspeed + " " + yspeed + " " + frames);
+			lastChecked = System.currentTimeMillis();
+		}
+		
+		
+		Planet planet = Main.getClosestPlanet(this, data.planets);
+		for(int i=0;i<planet.food.length;i++){
+			Food food = planet.food[i];
+			if(!food.enabled) continue;
+			int foodx = (int) (Math.cos(food.angle)*(planet.radius+food.getSize()/2+5) + planet.x);
+			int foody = (int) (Math.sin(food.angle)*(planet.radius+food.getSize()/2+5) + planet.y);
+			if(x+getSize()>foodx && x<foodx+food.getSize() && y+getSize()>foody && y<foody+food.getSize()){
+				food.enabled = false;
+				main.messenger.sendMessageToAll("COLLECT " + id + " " + food.getAmount());
+				main.messenger.sendMessageToAll("FOOD " + Main.getIndexOf(planet, data.planets) + " " + i + " " + false + " " + 0 + " " + 0);
+				mass += food.getAmount();
+			}
+		}
+	}
+	
+	public void update(Data data, double delta){
 		frames++;
 		if(paused){
 			pausedStack++;
@@ -63,7 +88,7 @@ public class Player extends Entity{
 //		}
 		
 		//gravity
-		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, main.planets);
+		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, data.planets);
 		float gravityx = 0;
 		float gravityy = 0;
 		for(Planet planet: closestplanets){
@@ -74,14 +99,8 @@ public class Player extends Entity{
 			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
 		}
 		
-//		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
-		if(true){
-			main.messenger.sendMessageToAll("CHECK " + id + " " + x + " " + y + " " + xspeed + " " + yspeed + " " + frames);
-			lastChecked = System.currentTimeMillis();
-		}
-		
 		//bouncing
-		Planet planet = Main.getClosestPlanet(this, main.planets);
+		Planet planet = Main.getClosestPlanet(this, data.planets);
 		if(Main.isTouchingPlanet(this, planet)){
 			System.out.println(frames + " frame bounced at");
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
@@ -102,27 +121,14 @@ public class Player extends Entity{
 			y = (float) (newy + Math.sin(angle) * (getRadius()+2));
 		}
 		
-		for(int i=0;i<planet.food.length;i++){
-			Food food = planet.food[i];
-			if(!food.enabled) continue;
-			int foodx = (int) (Math.cos(food.angle)*(planet.radius+food.getSize()/2+5) + planet.x);
-			int foody = (int) (Math.sin(food.angle)*(planet.radius+food.getSize()/2+5) + planet.y);
-			if(x+getSize()>foodx && x<foodx+food.getSize() && y+getSize()>foody && y<foody+food.getSize()){
-				food.enabled = false;
-				main.messenger.sendMessageToAll("COLLECT " + id + " " + food.getAmount());
-				main.messenger.sendMessageToAll("FOOD " + Main.getIndexOf(planet, main.planets) + " " + i + " " + false + " " + 0 + " " + 0);
-				mass += food.getAmount();
-			}
-		}
-		
 		//add gravity speeds to speed
 		xspeed += gravityx*delta;
 		yspeed += gravityy*delta;
 		
 		//movement
 		if(right){
-			xspeed += Math.cos(Main.getClosestAngle(this, main.planets)+1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
-			yspeed += Math.sin(Main.getClosestAngle(this, main.planets)+1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			xspeed += Math.cos(Main.getClosestAngle(this, data.planets)+1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			yspeed += Math.sin(Main.getClosestAngle(this, data.planets)+1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 			
 //			System.out.println(frames + " MOVED BY X " + (Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta) + " MOVED BY Y " + Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta + " AT ANGLE " + main.getClosestAngle(this) + " X " + x + " Y " + y);
 			
@@ -134,8 +140,8 @@ public class Player extends Entity{
 //			}
 		}
 		if(left){
-			xspeed += Math.cos(Main.getClosestAngle(this, main.planets)-1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
-			yspeed += Math.sin(Main.getClosestAngle(this, main.planets)-1.5708)*main.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			xspeed += Math.cos(Main.getClosestAngle(this, data.planets)-1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			yspeed += Math.sin(Main.getClosestAngle(this, data.planets)-1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 
 //			x+=Math.cos(-Math.PI) * 500*delta;
 //			y+=Math.sin(-Math.PI) * 500*delta;
@@ -187,19 +193,40 @@ public class Player extends Entity{
 //		}
 	}
 	
-	public void shoot(float projectileangle, ArrayList<Projectile> projectiles){
-		Projectile addedProjectile = new Projectile(x + ((getSize() + Main.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + Main.projectilesize/2) * Math.sin(projectileangle)), Main.projectilesize, projectileangle, Main.projectileSpeed);
+	public void shoot(float projectileangle, ArrayList<Projectile> projectiles, Class<?> projectileClass){
+		Constructor<?> constructor;
+		Projectile addedProjectile = null;
+		try {
+			constructor = projectileClass.getConstructor(double.class, double.class, int.class, double.class, float.class);
+			
+			addedProjectile = (Projectile) constructor.newInstance(new Object[]{x + ((getSize() + Data.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + Data.projectilesize/2) * Math.sin(projectileangle)), Data.projectilesize, projectileangle, Data.projectileSpeed});
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		if(addedProjectile == null){
+			System.err.println("ADDED PROJECTILE IS NULL IN PLAYER SHOOT METHOD (SERVER)"); //this should never be called---------------
+		}
+		
 		projectiles.add(addedProjectile);
 		
 		System.out.println("PLAYER SHOOTING" + id);
 		
-		xspeed -= (Math.cos(projectileangle) * Main.projectileSpeedChange);
-		yspeed -= (Math.sin(projectileangle) * Main.projectileSpeedChange);
+		xspeed -= (Math.cos(projectileangle) * Data.projectileSpeedChange);
+		yspeed -= (Math.sin(projectileangle) * Data.projectileSpeedChange);
 		
-		if(oldStates.size()>1){
-			oldStates.get(oldStates.size()-1).shot = true;
-			oldStates.get(oldStates.size()-1).projectileAngle = projectileangle;
-		}
+		oldStates.get(oldStates.size()-1).shot = true;
+		oldStates.get(oldStates.size()-1).projectileAngle = projectileangle;
 	}
 	
 	public boolean collided(Entity player){
