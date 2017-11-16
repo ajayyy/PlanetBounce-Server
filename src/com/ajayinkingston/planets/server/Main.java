@@ -361,6 +361,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player.left = !disable;
 		}
 		
+		player.move(data, 1/fps);
+		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
 		for(Player player2: new ArrayList<>(players)){
@@ -419,7 +421,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		//now do the thing
 		if(frame > currentFrame){
-			//ok something went wrong here
+			// that's ok, the client is probably behind on purpose (still need to fix the bug where the client gets incredibly behind)
 //			player.start = (long) (currentTime - time);
 			frame = currentFrame;
 			System.out.println("aslkjdsalkjasjjjdjdsajasldjdas");
