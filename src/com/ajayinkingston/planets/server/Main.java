@@ -292,15 +292,22 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			return false; //returns false to be called later when this movement actually happens
 		}
 		
-//		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
-//		if(originalState == null){
-//			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
-//			System.out.println("--__--");
-//		}
+		if(direction){
+			player.right = !disable;
+		}else{
+			player.left = !disable;
+		}
+		if(true) return true;
+		
+		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
+		if(originalState == null){
+			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
+			System.out.println("--__--");
+		}
 		
 		//count the difference
-//		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
-		long amountremoved = currentFrame - frame;
+		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+//		long amountremoved = currentFrame - frame;
 		if(frame == currentFrame) amountremoved = 0;
 //		int index = player.oldStates.indexOf(originalState);
 //		if(index==-1) index = 0;
@@ -528,6 +535,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 //		Projectile addedProjectile = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(projectileangle)), projectilesize, projectileangle, projectileSpeed);
 //		projectiles.add(addedProjectile);
 		
+		player.frames = frame;
+		
 		//call update however many missed frames there were
 		for(int i=0;i<amountremoved;i++){//remove all of the future ones
 			System.out.println("isthisevenrunning????");
@@ -592,14 +601,14 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		if(message.startsWith("s")){
 			
 			//click (shoot)
-			Player player = getPlayer(id, players);
+			Player player = getPlayer(id, data.players);
 			if(player==null) return;
 			float projectileangle = Float.parseFloat(message.split(" ")[1]);
 			long frame = Long.parseLong(message.split(" ")[2]);// when the action happened
 			
 			shots.add(new Shot(player, projectileangle, frame));
 			
-			for(Player player2:players){
+			for(Player player2:data.players){
 				if(player2 != player){
 					messenger.sendMessageToClient(player2.id, "s " + player.id + " " + omessage);
 				}
@@ -612,14 +621,14 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				disable = true;
 				message = message.substring(1);
 			}
-			Player player = getPlayer(id, players);
+			Player player = getPlayer(id, data.players);
 			if(player==null) return;
 			int direction = Integer.parseInt(message.split(" ")[0]);
 			long frame = Long.parseLong(message.split(" ")[1]);// when the action happened
 			
 			movements.add(new Movement(player, disable, direction > 0, frame));
 			
-			for(Player player2:players){
+			for(Player player2:data.players){
 				if(player2 != player){
 //					System.out.println("hwhsakjsadkj" + player2 + " " + player);
 					messenger.sendMessageToClient(player2.id, player.id + " " + omessage);
