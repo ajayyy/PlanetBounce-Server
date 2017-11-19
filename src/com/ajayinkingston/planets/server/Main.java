@@ -297,6 +297,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}else{
 			player.left = !disable;
 		}
+		player.move(data, currentFrame);
 		if(true) return true;
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
@@ -375,7 +376,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		for(Player player2: new ArrayList<>(players)){
 			if(player2.frames < amountremoved){//because amount removed would be the amount of frames that have happened since, if this was created on that frame, then the frame - amount removed would be 0
 				nonSpawnedPlayers.add(player2);
-				players.remove(player2);
+				data.players.remove(player2);
 			}
 		}
 		
@@ -387,14 +388,14 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			for(Player player2: new ArrayList<>(nonSpawnedPlayers)){
 				if(player.frames < amountremoved-i){
-					players.add(player2);
+					data.players.add(player2);
 					nonSpawnedPlayers.remove(player2);
 				}
 			}
 			
 			//iterate through players to make sure all events from oldstate are recalculated
-			for(Player player2: players){
-				ArrayList<OldState> oldOldStates = playerOldOldStates.get(players.indexOf(player2));
+			for(Player player2: data.players){
+				ArrayList<OldState> oldOldStates = playerOldOldStates.get(data.players.indexOf(player2));
 				if(player2 != player){
 					player2.left = oldOldStates.get(i).left;
 					player2.right = oldOldStates.get(i).right;
@@ -810,8 +811,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 	@Override
 	public void onDisconnected(int id) {
-		players.remove(getPlayer(id, players));
-		for(Player player: players){
+		data.players.remove(getPlayer(id, data.players));
+		for(Player player: data.players){
 			messenger.sendMessageToClient(player.id, "DISCONNECTED " + id);
 		}
 	}
