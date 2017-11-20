@@ -147,35 +147,12 @@ public class Player extends Entity{
 //			y+=Math.sin(-Math.PI) * 500*delta;
 		}
 		
-		//friction
-//		if(Math.abs(xspeed) < friction*delta) xspeed = 0;
-//		else if(xspeed>0) xspeed-=friction*delta;
-//		else if(xspeed<0) xspeed+=friction*delta;
-//		if(Math.abs(yspeed) < friction*delta) yspeed = 0;
-//		else if(yspeed>0) yspeed-=friction*delta;
-//		else if(yspeed<0) yspeed+=friction*delta;
 		
-		double movementAngle = Math.atan2(yspeed, xspeed);
-		xspeed -= Math.cos(movementAngle) * friction * delta;
-		yspeed -= Math.sin(movementAngle) * friction * delta;
+		addFriction(delta);
 		
 		//add all speeds
 		x += xspeed*delta;
 		y += yspeed*delta;
-		
-//		if(shot){  MOVED TO SHOOT FUNCTION
-//			Projectile addedProjectile = new Projectile(x + ((getSize() + main.projectilesize/2) * Math.cos(projectileangle)), y + ((getSize() + main.projectilesize/2) * Math.sin(projectileangle)), main.projectilesize, projectileangle, main.projectileSpeed);
-//			main.projectiles.add(addedProjectile);
-//			
-//			System.out.println("PLAYER SHOOTING" + id);
-//			
-//			xspeed -= (float) (Math.cos(projectileangle) * main.projectileSpeedChange);
-//			yspeed -= (float) (Math.sin(projectileangle) * main.projectileSpeedChange);
-//			
-//		}
-		
-		
-//		System.out.println("X: " + x + " Y: " + y + " DELTA: " + delta);
 		
 //		//save the shot oldstate in the previous frame DEPRECATED
 //		if(oldStates.size()>1){
@@ -191,6 +168,12 @@ public class Player extends Entity{
 //			shot = false;//reset it
 //			projectileangle = 0;
 //		}
+	}
+	
+	public void addFriction(double delta){
+		double movementAngle = Math.atan2(yspeed, xspeed);
+		xspeed -= Math.cos(movementAngle) * friction * delta;
+		yspeed -= Math.sin(movementAngle) * friction * delta;
 	}
 	
 	public void move(Data data, double delta){ //calls one frame of movement
@@ -215,6 +198,8 @@ public class Player extends Entity{
 ////					x+=Math.cos(-Math.PI) * 500*delta;
 ////					y+=Math.sin(-Math.PI) * 500*delta;
 //		}
+		
+		addFriction(delta);
 	}
 	
 	public void shoot(float projectileangle, ArrayList<Projectile> projectiles, Class<?> projectileClass){

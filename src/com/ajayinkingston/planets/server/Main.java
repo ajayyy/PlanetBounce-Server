@@ -297,7 +297,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}else{
 			player.left = !disable;
 		}
-		player.move(data, currentFrame);
+//		player.move(data, currentFrame);
 		if(true) return true;
 		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
