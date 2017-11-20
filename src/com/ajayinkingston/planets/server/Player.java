@@ -62,30 +62,30 @@ public class Player extends Entity{
 			pausedStack++;
 			return;
 		}
-		if(frames > 60){
-			left = true;
-		}
-//		if(frames > 150){
-//			right = false;
-//		}
-//		if(frames > 200){
+//		if(frames > 60){
 //			left = true;
 //		}
-//		if(frames > 250){
+////		if(frames > 150){
+////			right = false;
+////		}
+////		if(frames > 200){
+////			left = true;
+////		}
+////		if(frames > 250){
+////			left = false;
+////		}
+////		if(frames > 300){
+////			right = true;
+////		}
+//		if(frames > 350){
 //			left = false;
 //		}
-//		if(frames > 300){
+//		if(frames > 500){
 //			right = true;
 //		}
-		if(frames > 350){
-			left = false;
-		}
-		if(frames > 500){
-			right = true;
-		}
-		if(frames > 650){
-			right = false;
-		}
+//		if(frames > 650){
+//			right = false;
+//		}
 		
 		//gravity
 		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, data.planets);
