@@ -629,6 +629,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			int direction = Integer.parseInt(message.split(" ")[0]);
 			long frame = Long.parseLong(message.split(" ")[1]);// when the action happened
 			
+			System.out.println("RECIEVED MOVEMENT FROM PLAYER " + id + " " + message);
+			
 			movements.add(new Movement(player, disable, direction > 0, frame));
 			
 			for(Player player2:data.players){
