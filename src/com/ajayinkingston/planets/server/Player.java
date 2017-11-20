@@ -95,8 +95,8 @@ public class Player extends Entity{
 //			System.out.println((player == null) + " " + (planet == null));
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
 			
-//			gravityx += Math.cos(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;//XXX: IF YOU CHANGE THIS CHANGE IT IN PLANET CLASS AND SERVER PROJECT TOO
-//			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
+			gravityx += Math.cos(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;//XXX: IF YOU CHANGE THIS CHANGE IT IN PLANET CLASS AND SERVER PROJECT TOO
+			gravityy += Math.sin(angle) * planet.gravityhelperconstant / ((Math.sqrt(Math.pow((y) - (planet.y), 2) + Math.pow((x) - (planet.x), 2))) - getRadius() - planet.radius + 300) * 350;
 		}
 		
 		//bouncing
@@ -172,8 +172,24 @@ public class Player extends Entity{
 	
 	public void addFriction(double delta){
 		double movementAngle = Math.atan2(yspeed, xspeed);
-		xspeed -= Math.cos(movementAngle) * friction * delta;
-		yspeed -= Math.sin(movementAngle) * friction * delta;
+		
+		double xchange = - (Math.cos(movementAngle) * friction * delta);
+		double ychange = - (Math.sin(movementAngle) * friction * delta);
+		
+		//if they are going to overshoot the goal, set it to zero (the goal), and don't move it
+		if(xchange > 0 && xspeed + xchange > 0){
+			xspeed = 0;
+		}else if(xchange < 0 && xspeed + xchange < 0){
+			xspeed = 0;
+		}
+		if(ychange > 0 && yspeed + ychange > 0){
+			yspeed = 0;
+		}else if(ychange < 0 && yspeed + ychange < 0){
+			yspeed = 0;
+		}
+		
+		if(xspeed != 0) xspeed += xchange;
+		if(yspeed != 0) yspeed += ychange;
 	}
 	
 	public void move(Data data, double delta){ //calls one frame of movement
