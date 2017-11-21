@@ -371,7 +371,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player.left = !disable;
 		}
 		
-		player.move(data, 1/fps);
+//		player.move(data, 1/fps);
 		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
