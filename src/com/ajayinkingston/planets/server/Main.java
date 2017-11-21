@@ -105,8 +105,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
         
         data.planets = planetlist.toArray(new Planet[planetlist.size()]);
         
-        data.planets = new Planet[1];
-        data.planets[0] = planetlist.get(0);
+//        data.planets = new Planet[1];
+//        data.planets[0] = planetlist.get(0);
         
 		players = data.players;
 		planets = data.planets;
