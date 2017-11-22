@@ -41,7 +41,7 @@ public class Player extends Entity{
 		}
 		
 		
-		Planet planet = Main.getClosestPlanet(this, data.planets);
+		Planet planet = Data.getClosestPlanet(this, data.planets);
 		for(int i=0;i<planet.food.length;i++){
 			Food food = planet.food[i];
 			if(!food.enabled) continue;
@@ -50,7 +50,7 @@ public class Player extends Entity{
 			if(x+getSize()>foodx && x<foodx+food.getSize() && y+getSize()>foody && y<foody+food.getSize()){
 				food.enabled = false;
 				main.messenger.sendMessageToAll("COLLECT " + id + " " + food.getAmount());
-				main.messenger.sendMessageToAll("FOOD " + Main.getIndexOf(planet, data.planets) + " " + i + " " + false + " " + 0 + " " + 0);
+				main.messenger.sendMessageToAll("FOOD " + Data.getIndexOf(planet, data.planets) + " " + i + " " + false + " " + 0 + " " + 0);
 				mass += food.getAmount();
 			}
 		}
@@ -88,7 +88,7 @@ public class Player extends Entity{
 //		}
 		
 		//gravity
-		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, data.planets);
+		ArrayList<Planet> closestplanets = Data.getClosestPlanets(this, data.planets);
 		float gravityx = 0;
 		float gravityy = 0;
 		for(Planet planet: closestplanets){
@@ -100,8 +100,8 @@ public class Player extends Entity{
 		}
 		
 		//bouncing
-		Planet planet = Main.getClosestPlanet(this, data.planets);
-		if(Main.isTouchingPlanet(this, planet)){
+		Planet planet = Data.getClosestPlanet(this, data.planets);
+		if(Data.isTouchingPlanet(this, planet)){
 			System.out.println(frames + " frame bounced at");
 			double angle = Math.atan2((y) - (planet.y), (x) - (planet.x));
 			
@@ -127,8 +127,8 @@ public class Player extends Entity{
 		
 		//movement
 		if(right){
-			xspeed += Math.cos(Main.getClosestAngle(this, data.planets)+1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
-			yspeed += Math.sin(Main.getClosestAngle(this, data.planets)+1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			xspeed += Math.cos(Data.getClosestAngle(this, data.planets)+1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			yspeed += Math.sin(Data.getClosestAngle(this, data.planets)+1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 			
 //			System.out.println(frames + " MOVED BY X " + (Math.cos(main.getClosestAngle(this)+1.5708)*main.speed * delta) + " MOVED BY Y " + Math.sin(main.getClosestAngle(this)+1.5708)*main.speed * delta + " AT ANGLE " + main.getClosestAngle(this) + " X " + x + " Y " + y);
 			
@@ -140,8 +140,8 @@ public class Player extends Entity{
 //			}
 		}
 		if(left){
-			xspeed += Math.cos(Main.getClosestAngle(this, data.planets)-1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
-			yspeed += Math.sin(Main.getClosestAngle(this, data.planets)-1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			xspeed += Math.cos(Data.getClosestAngle(this, data.planets)-1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
+			yspeed += Math.sin(Data.getClosestAngle(this, data.planets)-1.5708)*data.speed * delta;//1.5708 is 90 degrees in radians (half pi or quarter tau)
 
 //			x+=Math.cos(-Math.PI) * 500*delta;
 //			y+=Math.sin(-Math.PI) * 500*delta;
