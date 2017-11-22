@@ -34,8 +34,8 @@ public class Player extends Entity{
 	}
 	
 	public void sendDataToClient(Main main, Data data){
-//		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
-		if(true){
+		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
+//		if(true){
 			main.messenger.sendMessageToAll("CHECK " + id + " " + x + " " + y + " " + xspeed + " " + yspeed + " " + frames);
 			lastChecked = System.currentTimeMillis();
 		}
