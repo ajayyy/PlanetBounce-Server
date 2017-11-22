@@ -29,7 +29,7 @@ public class Projectile extends Entity{
 	public void update(Data data, double delta){
 		frame++;
 
-		ArrayList<Planet> closestplanets = Main.getClosestPlanets(this, data.planets);
+		ArrayList<Planet> closestplanets = Data.getClosestPlanets(this, data.planets);
 		float gravityx = 0;
 		float gravityy = 0;
 		for(Planet planet:closestplanets){
