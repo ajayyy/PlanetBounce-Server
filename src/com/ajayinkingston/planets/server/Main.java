@@ -292,16 +292,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			return false; //returns false to be called later when this movement actually happens
 		}
 		
-		System.out.println("HANDLE MOVEMENT CALLED");
-		
-		if(direction){
-			player.right = !disable;
-		}else{
-			player.left = !disable;
-		}
-//		player.move(data, currentFrame);
-		if(true) return true;
-		
 		OldState originalState = getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
 		if(originalState == null){
 			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
