@@ -9,7 +9,7 @@ public class Player extends Entity{
 	
 	public boolean left,right;//now going to be used
 	
-	public long frames; //amount of frames passed
+	public long frames = 0; //amount of frames passed
 	public long lastChecked = System.currentTimeMillis();//last time checked client if they have proper x
 	
 	public ArrayList<OldState> oldStates = new ArrayList<>();
@@ -34,8 +34,8 @@ public class Player extends Entity{
 	}
 	
 	public void sendDataToClient(Main main, Data data){
-		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
-//		if(true){
+//		if(System.currentTimeMillis() - lastChecked >= 1000){//1 seconds since last checked?
+		if(true){
 			main.messenger.sendMessageToAll("CHECK " + id + " " + x + " " + y + " " + xspeed + " " + yspeed + " " + frames);
 			lastChecked = System.currentTimeMillis();
 		}

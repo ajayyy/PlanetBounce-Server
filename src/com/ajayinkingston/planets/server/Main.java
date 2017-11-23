@@ -292,15 +292,15 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			return false; //returns false to be called later when this movement actually happens
 		}
 		
-		OldState originalState = Data.getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
-		if(originalState == null){
-			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
-			System.out.println("--__--");
-		}
+//		OldState originalState = Data.getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
+//		if(originalState == null){
+//			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
+//			System.out.println("--__--");
+//		}
 		
 		//count the difference
-		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
-//		long amountremoved = currentFrame - frame;
+//		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+		long amountremoved = currentFrame - frame;
 		if(frame == currentFrame) amountremoved = 0;
 //		int index = player.oldStates.indexOf(originalState);
 //		if(index==-1) index = 0;
@@ -438,10 +438,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 //			System.out.println("aefsrtyu7654322sertyuiute456765rf");
 //		}
 		
-		OldState originalState = Data.getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
-		if(originalState == null){
-			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
-		}
+//		OldState originalState = Data.getOldStateAtFrame(new ArrayList<>(player.oldStates), frame);
+//		if(originalState == null){
+//			originalState = new OldState(player.x, player.y, player.xspeed, player.yspeed, currentFrame, player.left, player.right, false, 0);
+//		}
 		
 //		//make now like that old state
 //		player.x = originalState.x;
@@ -451,7 +451,8 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 		
 		//count the difference
-		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+//		int amountremoved = player.oldStates.size() - (player.oldStates.indexOf(originalState) + 1);
+		long amountremoved = currentFrame - frame;
 		if(frame == currentFrame) amountremoved = 0;
 //		System.out.println("AMOUNT REMOVED " + amountremoved);
 //		int index = player.oldStates.indexOf(originalState);
