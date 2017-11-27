@@ -298,7 +298,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 
 		//make projectile and player oldOldState variables
 		ArrayList<ArrayList<OldState>> playerOldOldStates = new ArrayList<>();
-		ArrayList<ArrayList<OldState>> projectileOldOldStates = new ArrayList<>();
 		
 		//check for any projectiles created after this frame
 		for(Projectile projectile: new ArrayList<>(projectiles)){
@@ -399,7 +398,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		//make projectile and player oldOldState variables
 		ArrayList<ArrayList<OldState>> playerOldOldStates = new ArrayList<>();
-		ArrayList<ArrayList<OldState>> projectileOldOldStates = new ArrayList<>();
 		
 		//check for any projectiles created after this frame
 		for(Projectile projectile: new ArrayList<>(projectiles)){
@@ -423,7 +421,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 			
 			projectile.oldstates = Data.removeFutureOldStatesFromOldState(projectile.oldstates, state);
-//			projectileOldOldStates.add(getOldStatesAfterOldState(projectile.oldstates, state));
 		}
 		
 		//set all players to proper values
@@ -470,13 +467,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				player2.right = oldOldStates.get(i).right;
 				if(oldOldStates.get(i).shot){
 					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles, Projectile.class);
-//					player2.shot = true;
-//					player2.projectileangle = oldOldStates.get(i).projectileangle;
-//					player2.xspeed -= (float) (Math.cos(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
-//					player2.yspeed -= (float) (Math.sin(oldOldStates.get(i).projectileangle) * projectileSpeedChange);
-//					
-//					Projectile addedProjectile1 = new Projectile(player.x + ((player.getSize() + projectilesize/2) * Math.cos(oldOldStates.get(i).projectileangle)), player.y + ((player.getSize() + projectilesize/2) * Math.sin(oldOldStates.get(i).projectileangle)), projectilesize, oldOldStates.get(i).projectileangle, projectileSpeed);
-//					projectiles.add(addedProjectile1);
 				}
 			}
 			
