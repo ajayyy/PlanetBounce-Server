@@ -44,11 +44,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	
 	Data data; // where data is saved
 	
-	//for compatibility purposes, just the variables from data
-	public ArrayList<Player> players = new ArrayList<>();
-	public Planet[] planets = new Planet[0];
-	public ArrayList<Projectile> projectiles = new ArrayList<>();
-	
 	public static void main(String[] args){
 		new Main();
 	}
@@ -108,10 +103,6 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 //        data.planets = new Planet[1];
 //        data.planets[0] = planetlist.get(0);
         
-		players = data.players;
-		planets = data.planets;
-		projectiles = data.projectiles;
-        
         Thread thread = new Thread(this);
         thread.start();
 	}
@@ -156,15 +147,15 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 				g.setColor(Color.white);
 				g.fillRect(0, 0, getWidth(), getHeight());
 				g.setColor(Color.black);
-				for(Player player: new ArrayList<Player>(players)){
+				for(Player player: new ArrayList<Player>(data.players)){
 					g.fillOval((int) (player.x/10 + getWidth()/2), (int) (player.y/10 + 200), (int) (player.getSize()/5), (int) (player.getSize()/5));
 				}
-				for(Projectile projectile: projectiles){
+				for(Projectile projectile: data.projectiles){
 					g.fillOval((int) (projectile.x/10 + getWidth()/2), (int) (projectile.y/10 + 200), (int) (projectile.getSize()/5), (int) (projectile.getSize()/5));
 				}
 				
-				for(int i=0;i<planets.length;i++){
-					g.fillOval((int) (planets[i].x/10-planets[i].radius/10 + getWidth()/2), (int) (planets[i].y/10-planets[i].radius/10 + 200), (int) (planets[i].radius/5), (int) (planets[i].radius/5));
+				for(int i=0;i<data.planets.length;i++){
+					g.fillOval((int) (data.planets[i].x/10-data.planets[i].radius/10 + getWidth()/2), (int) (data.planets[i].y/10-data.planets[i].radius/10 + 200), (int) (data.planets[i].radius/5), (int) (data.planets[i].radius/5));
 				}
 				
 				s.show();
@@ -190,28 +181,24 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	}
 	
 	public void update(double delta, boolean simulation){
-		//update the variables (since they are actually properly stored in data)
-		players = data.players;
-		planets = data.planets;
-		projectiles = data.projectiles;
 		
-		for(Projectile projectile: new ArrayList<>(projectiles)){
+		for(Projectile projectile: new ArrayList<>(data.projectiles)){
 			if(projectile.dead){
 				if(projectile.frame - projectile.deadframe > 200){
-					projectiles.remove(projectile);
+					data.projectiles.remove(projectile);
 				}else{
 					projectile.frame++;
 				}
 			}else{
 				projectile.update(data, delta);//
-				if(System.currentTimeMillis() - projectile.start > 4500 || Data.isTouchingPlanet(projectile, Data.getClosestPlanet(projectile, planets))){
+				if(System.currentTimeMillis() - projectile.start > 4500 || Data.isTouchingPlanet(projectile, Data.getClosestPlanet(projectile, data.planets))){
 					projectile.dead = true;
 					projectile.deadframe = projectile.frame-1;
 				}
 			}
 		}
 		
-		for(Player player: new ArrayList<Player>(players)){
+		for(Player player: new ArrayList<Player>(data.players)){
 			player.update(data, delta);
 			player.sendDataToClient(this, data);
 		}
@@ -227,18 +214,18 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		//collision detection
-		for(int i=0;i<players.size();i++){//for player to player
-			for(int s=i+1;s<players.size();s++){
-				if(players.get(i).collided(players.get(s))){
+		for(int i=0;i<data.players.size();i++){//for player to player
+			for(int s=i+1;s<data.players.size();s++){
+				if(data.players.get(i).collided(data.players.get(s))){
 					//collided with player
-					affectColidedPlayers(players.get(i),players.get(s));
+					affectColidedPlayers(data.players.get(i), data.players.get(s));
 				}
 			}
 		}
 		//projectile collision
-		for(Projectile projectile: new ArrayList<>(projectiles)){
+		for(Projectile projectile: new ArrayList<>(data.projectiles)){
 			if(projectile.dead) continue;
-			for(Player player: players){
+			for(Player player: data.players){
 				if(player.collided(projectile)){
 					//collided
 					affectColidedPlayers(player,projectile);
@@ -300,16 +287,16 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		ArrayList<ArrayList<OldState>> playerOldOldStates = new ArrayList<>();
 		
 		//check for any projectiles created after this frame
-		for(Projectile projectile: new ArrayList<>(projectiles)){
+		for(Projectile projectile: new ArrayList<>(data.projectiles)){
 			if(projectile.frame < amountremoved){//because amount removed would be the amount of frames that have happened since, if this was created on that frame, then the frame - amount removed would be 0
-				projectiles.remove(projectile);
+				data.projectiles.remove(projectile);
 			}
 		}
 		
 		System.out.println((currentFrame - frame) + " asaasfasasdasfliuioelpo");
 		
 		//set all projectiles to proper values
-		for(Projectile projectile: projectiles){
+		for(Projectile projectile: data.projectiles){
 			OldState state = Data.getOldStateAtFrame(projectile.oldstates, projectile.frame - (currentFrame - frame));
 			projectile.x = state.x;
 			projectile.y = state.y;
@@ -324,7 +311,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		//set all players to proper values
-		for(Player player2: players){
+		for(Player player2: data.players){
 			OldState state = Data.getOldStateAtFrame(player2.oldStates, player2.frames - (currentFrame - frame));
 			player2.x = state.x;
 			player2.y = state.y;
@@ -345,7 +332,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
-		for(Player player2: new ArrayList<>(players)){
+		for(Player player2: new ArrayList<>(data.players)){
 			if(player2.frames < amountremoved){//because amount removed would be the amount of frames that have happened since, if this was created on that frame, then the frame - amount removed would be 0
 				nonSpawnedPlayers.add(player2);
 				data.players.remove(player2);
@@ -372,7 +359,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 					player2.right = oldOldStates.get(i).right;
 				}
 				if(oldOldStates.get(i).shot){
-					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles, Projectile.class);
+					player2.shoot(oldOldStates.get(i).projectileAngle, data.projectiles, Projectile.class);
 				}
 			}
 			
@@ -400,16 +387,16 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		ArrayList<ArrayList<OldState>> playerOldOldStates = new ArrayList<>();
 		
 		//check for any projectiles created after this frame
-		for(Projectile projectile: new ArrayList<>(projectiles)){
+		for(Projectile projectile: new ArrayList<>(data.projectiles)){
 			if(projectile.frame < amountremoved){//because amount removed would be the amount of frames that have happened since, if this was created on that frame, then the frame - amount removed would be 0
-				projectiles.remove(projectile);
+				data.projectiles.remove(projectile);
 			}
 		}
 		
 		System.out.println((currentFrame - frame) + " asaasfasasdasfliuioelpo");
 		
 		//set all projectiles to proper values
-		for(Projectile projectile: projectiles){
+		for(Projectile projectile: data.projectiles){
 			OldState state = Data.getOldStateAtFrame(projectile.oldstates, projectile.frame - (currentFrame - frame));
 			projectile.x = state.x;
 			projectile.y = state.y;
@@ -424,7 +411,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		}
 		
 		//set all players to proper values
-		for(Player player2: players){
+		for(Player player2: data.players){
 			OldState state = Data.getOldStateAtFrame(player2.oldStates, player2.frames - (currentFrame - frame));
 			player2.x = state.x;
 			player2.y = state.y;
@@ -436,14 +423,14 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			player2.oldStates = Data.removeFutureOldStatesFromOldState(player2.oldStates, state);
 		}
 		
-		player.shoot(projectileangle, projectiles, Projectile.class);
+		player.shoot(projectileangle, data.projectiles, Projectile.class);
 		
 		ArrayList<Player> nonSpawnedPlayers = new ArrayList<>();
 		
-		for(Player player2: new ArrayList<>(players)){
+		for(Player player2: new ArrayList<>(data.players)){
 			if(player2.frames < amountremoved){//because amount removed would be the amount of frames that have happened since, if this was created on that frame, then the frame - amount removed would be 0
 				nonSpawnedPlayers.add(player2);
-				players.remove(player2);
+				data.players.remove(player2);
 			}
 		}
 		
@@ -455,18 +442,18 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			
 			for(Player player2: new ArrayList<>(nonSpawnedPlayers)){
 				if(player.frames < amountremoved-i){
-					players.add(player2);
+					data.players.add(player2);
 					nonSpawnedPlayers.remove(player2);
 				}
 			}
 			
 			//iterate through players to make sure all events from oldstate are recalculated
-			for(Player player2: players){
-				ArrayList<OldState> oldOldStates = playerOldOldStates.get(players.indexOf(player2));
+			for(Player player2: data.players){
+				ArrayList<OldState> oldOldStates = playerOldOldStates.get(data.players.indexOf(player2));
 				player2.left = oldOldStates.get(i).left;
 				player2.right = oldOldStates.get(i).right;
 				if(oldOldStates.get(i).shot){
-					player2.shoot(oldOldStates.get(i).projectileAngle, projectiles, Projectile.class);
+					player2.shoot(oldOldStates.get(i).projectileAngle, data.projectiles, Projectile.class);
 				}
 			}
 			
@@ -551,10 +538,10 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 		System.out.println("Player connected");
 		
 		Player newplayer = new Player(id, 0, 800, playerStartSize);
-		for(Player player:players){
+		for(Player player: data.players){
 			messenger.sendMessageToClient(player.id, "CONNECTED " + id + " " + newplayer.x + " " + newplayer.y + " " + newplayer.xspeed + " " + newplayer.yspeed + " " + newplayer.mass);
 		}
-		for(Player player:players){
+		for(Player player: data.players){
 			messenger.sendMessageToClient(id, "CONNECTED " + player.id + " " + player.x + " " + player.y + " " + player.xspeed + " " + player.yspeed + " " + player.mass);
 		}
 		for(int i=0;i<data.planets.length;i++){
@@ -565,7 +552,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 		}
 		messenger.sendMessageToClient(id, "START");
-		players.add(newplayer);
+		data.players.add(newplayer);
 	}
 
 	@Override
