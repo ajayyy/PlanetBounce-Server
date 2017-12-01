@@ -161,7 +161,7 @@ public class Player extends Entity{
 //		}
 		
 		//save old states
-		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, false, 0));
+		oldStates.add(new OldState(x, y, xspeed, yspeed, frames, left, right, false, 0, mass));
 		if(oldStates.size() > 200) oldStates.remove(0);
 		
 //		if(shot){

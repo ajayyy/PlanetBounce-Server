@@ -537,12 +537,12 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 	public void onConnected(int id) {
 		System.out.println("Player connected");
 		
-		Player newplayer = new Player(id, 0, 800, playerStartSize);
+		Player newPlayer = new Player(id, 0, 800, playerStartSize);
 		for(Player player: data.players){
-			messenger.sendMessageToClient(player.id, "CONNECTED " + id + " " + newplayer.x + " " + newplayer.y + " " + newplayer.xspeed + " " + newplayer.yspeed + " " + newplayer.mass);
+			messenger.sendMessageToClient(player.id, "CONNECTED " + id + " " + newPlayer.x + " " + newPlayer.y + " " + newPlayer.xspeed + " " + newPlayer.yspeed + " " + newPlayer.mass + " " + newPlayer.frames + " " + player.frames);
 		}
 		for(Player player: data.players){
-			messenger.sendMessageToClient(id, "CONNECTED " + player.id + " " + player.x + " " + player.y + " " + player.xspeed + " " + player.yspeed + " " + player.mass);
+			messenger.sendMessageToClient(id, "CONNECTED " + player.id + " " + player.x + " " + player.y + " " + player.xspeed + " " + player.yspeed + " " + player.mass + " " + player.frames + " " + newPlayer.frames);
 		}
 		for(int i=0;i<data.planets.length;i++){
 			System.out.println("sent data for planet");
@@ -552,7 +552,7 @@ public class Main extends Canvas implements ClientMessageReceiver, Runnable{
 			}
 		}
 		messenger.sendMessageToClient(id, "START");
-		data.players.add(newplayer);
+		data.players.add(newPlayer);
 	}
 
 	@Override
